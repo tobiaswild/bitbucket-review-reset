@@ -2,8 +2,8 @@ import { useEffect, useState } from 'react';
 import {
   clearReviewKeys,
   listReviewKeys,
-  parsePrFromUrl,
   type PullRequest,
+  parsePrFromUrl,
   type StoredKey,
 } from '@/utils/reviewState';
 import './App.css';
@@ -34,7 +34,10 @@ function App() {
 
   useEffect(() => {
     (async () => {
-      const [tab] = await browser.tabs.query({ active: true, currentWindow: true });
+      const [tab] = await browser.tabs.query({
+        active: true,
+        currentWindow: true,
+      });
       const pr = tab?.url ? parsePrFromUrl(tab.url) : null;
       if (!tab?.id || !pr) {
         setState({ status: 'not-pr' });
@@ -42,7 +45,9 @@ function App() {
       }
       const keys = await runInTab(tab.id, listReviewKeys, [pr.ref]);
       setState({ status: 'ready', tabId: tab.id, pr, keys });
-    })().catch((error) => setState({ status: 'error', message: String(error) }));
+    })().catch((error) =>
+      setState({ status: 'error', message: String(error) }),
+    );
   }, []);
 
   async function reset(tabId: number, ref: string) {
@@ -60,13 +65,18 @@ function App() {
     case 'loading':
       return <p className="muted">Loading…</p>;
     case 'not-pr':
-      return <p className="muted">Open a Bitbucket pull request to reset its review state.</p>;
+      return (
+        <p className="muted">
+          Open a Bitbucket pull request to reset its review state.
+        </p>
+      );
     case 'error':
       return <p className="error">{state.message}</p>;
     case 'cleared':
       return (
         <p className="success">
-          Cleared {state.count} {state.count === 1 ? 'entry' : 'entries'}. Reloading…
+          Cleared {state.count} {state.count === 1 ? 'entry' : 'entries'}.
+          Reloading…
         </p>
       );
     case 'ready': {
@@ -88,7 +98,9 @@ function App() {
                   </li>
                 ))}
               </ul>
-              <button onClick={() => reset(tabId, pr.ref)}>Reset review state</button>
+              <button type="button" onClick={() => reset(tabId, pr.ref)}>
+                Reset review state
+              </button>
             </>
           )}
         </>

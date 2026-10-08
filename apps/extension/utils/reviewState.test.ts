@@ -1,5 +1,10 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { clearReviewKeys, isReviewKeyFor, listReviewKeys, parsePrFromUrl } from './reviewState';
+import {
+  clearReviewKeys,
+  isReviewKeyFor,
+  listReviewKeys,
+  parsePrFromUrl,
+} from './reviewState';
 
 describe('parsePrFromUrl', () => {
   it.each([
@@ -68,9 +73,15 @@ describe('page scripts', () => {
 
   function seed() {
     const storage = new MemoryStorage();
-    storage.setItem('check24/mfso-mono/1644:files-reviewed-state', '{"a.ts":true}');
+    storage.setItem(
+      'check24/mfso-mono/1644:files-reviewed-state',
+      '{"a.ts":true}',
+    );
     storage.setItem('last-reviewed-commit:check24/mfso-mono/1644', 'abc123');
-    storage.setItem('__storejs_expire_mixin_last-reviewed-commit:check24/mfso-mono/1644', '1');
+    storage.setItem(
+      '__storejs_expire_mixin_last-reviewed-commit:check24/mfso-mono/1644',
+      '1',
+    );
     storage.setItem('check24/mfso-mono/16440:files-reviewed-state', '{}');
     storage.setItem('theme', 'dark');
     vi.stubGlobal('localStorage', storage);

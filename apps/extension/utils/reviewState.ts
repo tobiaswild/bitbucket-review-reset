@@ -55,6 +55,6 @@ export function clearReviewKeys(ref: string): number {
   const escaped = ref.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   const pattern = new RegExp(`(^|:)${escaped}(:|$)`);
   const keys = Object.keys(localStorage).filter((key) => pattern.test(key));
-  keys.forEach((key) => localStorage.removeItem(key));
+  for (const key of keys) localStorage.removeItem(key);
   return keys.length;
 }
