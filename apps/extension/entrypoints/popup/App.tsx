@@ -117,6 +117,15 @@ function App() {
           >
             Open regular URL
           </button>
+          <p className="muted settings-link">
+            <button
+              type="button"
+              className="link"
+              onClick={() => browser.runtime.openOptionsPage()}
+            >
+              Redirect these automatically…
+            </button>
+          </p>
         </>
       );
     case 'ready': {

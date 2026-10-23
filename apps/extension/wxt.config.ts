@@ -6,6 +6,6 @@ export default defineConfig({
   manifest: {
     name: 'Bitbucket Review Reset',
     description: 'Reset locally stored PR review progress on Bitbucket Cloud.',
-    permissions: ['activeTab', 'scripting'],
+    permissions: ['activeTab', 'scripting', 'storage'],
   },
 });
