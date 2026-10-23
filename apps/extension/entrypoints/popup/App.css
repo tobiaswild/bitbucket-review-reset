@@ -72,3 +72,21 @@ button {
 button:hover {
   background: var(--accent-hover);
 }
+
+.settings-link {
+  margin-top: 8px;
+}
+
+button.link {
+  width: auto;
+  padding: 0;
+  background: none;
+  color: var(--accent);
+  font-weight: 400;
+  text-decoration: underline;
+}
+
+button.link:hover {
+  background: none;
+  color: var(--accent-hover);
+}
