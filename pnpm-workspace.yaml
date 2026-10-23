@@ -2,4 +2,10 @@ packages:
   - "packages/*"
   - "apps/*"
 allowBuilds:
+  "@swc/core": false
+  core-js: false
   lefthook: true
+overrides:
+  serialize-javascript: ">=7.0.3"
+  shell-quote: ">=1.11.0"
+  tinypool: ">=2.1.2"
