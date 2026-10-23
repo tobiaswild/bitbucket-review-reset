@@ -18,3 +18,9 @@ body {
   display: block;
   color: var(--muted);
 }
+
+.setting.language {
+  align-items: center;
+  margin-top: 12px;
+  cursor: default;
+}

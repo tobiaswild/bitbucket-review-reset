@@ -1,4 +1,5 @@
 import Link from '@docusaurus/Link';
+import Translate from '@docusaurus/Translate';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import Heading from '@theme/Heading';
 import Layout from '@theme/Layout';
@@ -16,10 +17,14 @@ export default function Home(): ReactNode {
           <Heading as="h1" className="hero__title">
             {siteConfig.title}
           </Heading>
-          <p className="hero__subtitle">{siteConfig.tagline}</p>
+          <p className="hero__subtitle">
+            <Translate id="homepage.tagline">
+              Reset your review progress on Bitbucket Cloud pull requests
+            </Translate>
+          </p>
           <div className={styles.buttons}>
             <Link className="button button--secondary button--lg" to="/docs">
-              Get started
+              <Translate id="homepage.getStarted">Get started</Translate>
             </Link>
           </div>
         </div>
