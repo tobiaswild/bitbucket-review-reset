@@ -18,3 +18,5 @@ errors:
 options:
   autoRedirect: Für UUID-Links automatisch die reguläre URL öffnen
   autoRedirectHelp: Pull-Request-Links mit $1-Segmenten werden auf Workspace/Repo umgeleitet, wo dein Review-Fortschritt gespeichert ist.
+  language: Sprache
+  languageAuto: Automatisch (Browsersprache)

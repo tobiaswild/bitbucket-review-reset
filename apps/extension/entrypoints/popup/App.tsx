@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { i18n } from '#i18n';
+import { t } from '@/utils/i18n';
 import {
   clearReviewKeys,
   fetchRepoFullName,
@@ -30,7 +30,7 @@ async function runInTab<A extends unknown[], R>(
     func,
     args,
   });
-  if (!injection) throw new Error(i18n.t('errors.noScriptResult'));
+  if (!injection) throw new Error(t('errors.noScriptResult'));
   return injection.result as R;
 }
 
@@ -38,7 +38,6 @@ function App() {
   const [state, setState] = useState<State>({ status: 'loading' });
 
   useEffect(() => {
-    document.documentElement.lang = browser.i18n.getUILanguage();
     (async () => {
       const [tab] = await browser.tabs.query({
         active: true,
@@ -67,7 +66,7 @@ function App() {
         pr.repo,
       ]);
       if (!fullName) {
-        throw new Error(i18n.t('errors.noRepoName'));
+        throw new Error(t('errors.noRepoName'));
       }
       await browser.tabs.update(tabId, { url: withSlugs(url, fullName) });
       window.close();
@@ -89,22 +88,22 @@ function App() {
 
   switch (state.status) {
     case 'loading':
-      return <p className="muted">{i18n.t('loading')}</p>;
+      return <p className="muted">{t('loading')}</p>;
     case 'not-pr':
-      return <p className="muted">{i18n.t('popup.notPr')}</p>;
+      return <p className="muted">{t('popup.notPr')}</p>;
     case 'error':
       return <p className="error">{state.message}</p>;
     case 'cleared':
-      return <p className="success">{i18n.t('popup.cleared', state.count)}</p>;
+      return <p className="success">{t('popup.cleared', state.count)}</p>;
     case 'uuid-url':
       return (
         <>
-          <p className="muted">{i18n.t('popup.uuidNotice')}</p>
+          <p className="muted">{t('popup.uuidNotice')}</p>
           <button
             type="button"
             onClick={() => openCanonical(state.tabId, state.url, state.pr)}
           >
-            {i18n.t('popup.openRegularUrl')}
+            {t('popup.openRegularUrl')}
           </button>
           <p className="muted settings-link">
             <button
@@ -112,7 +111,7 @@ function App() {
               className="link"
               onClick={() => browser.runtime.openOptionsPage()}
             >
-              {i18n.t('popup.redirectAutomatically')}
+              {t('popup.redirectAutomatically')}
             </button>
           </p>
         </>
@@ -125,7 +124,7 @@ function App() {
             {pr.workspace}/{pr.repo} <span className="pr-id">#{pr.id}</span>
           </h1>
           {keys.length === 0 ? (
-            <p className="muted">{i18n.t('popup.noState')}</p>
+            <p className="muted">{t('popup.noState')}</p>
           ) : (
             <>
               <ul className="keys">
@@ -137,7 +136,7 @@ function App() {
                 ))}
               </ul>
               <button type="button" onClick={() => reset(tabId, pr.ref)}>
-                {i18n.t('popup.reset')}
+                {t('popup.reset')}
               </button>
             </>
           )}
