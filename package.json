@@ -10,7 +10,9 @@
     "lint": "biome lint .",
     "format": "biome format --write .",
     "check": "biome check .",
-    "check:fix": "biome check --write ."
+    "check:fix": "biome check --write .",
+    "compile": "pnpm -r compile",
+    "knip": "knip"
   },
   "keywords": [],
   "author": "",
@@ -25,6 +27,8 @@
   "packageManager": "pnpm@12.10.1",
   "type": "module",
   "devDependencies": {
-    "@biomejs/biome": "2.5.15"
+    "@biomejs/biome": "2.5.15",
+    "knip": "^6.42.1",
+    "lefthook": "^2.2.2"
   }
 }
