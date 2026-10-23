@@ -1,0 +1,20 @@
+extName: Bitbucket Review Reset
+extDescription: Reset locally stored PR review progress on Bitbucket Cloud.
+optionsTitle: Bitbucket Review Reset – Settings
+loading: Loading…
+popup:
+  notPr: Open a Bitbucket pull request to reset its review state.
+  cleared:
+    1: Cleared $1 entry. Reloading…
+    n: Cleared $1 entries. Reloading…
+  uuidNotice: This PR was opened through a UUID link. Bitbucket stores review progress under the regular workspace/repo name, so it isn't shown here.
+  openRegularUrl: Open regular URL
+  redirectAutomatically: Redirect these automatically…
+  noState: No saved review state for this PR.
+  reset: Reset review state
+errors:
+  noRepoName: Bitbucket did not return the repository name.
+  noScriptResult: Could not run script in this tab.
+options:
+  autoRedirect: Automatically open the regular URL for UUID links
+  autoRedirectHelp: Pull request links using $1 segments are redirected to workspace/repo, where your review progress is stored.

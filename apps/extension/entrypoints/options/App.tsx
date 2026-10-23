@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { i18n } from '#i18n';
 import { autoRedirectUuid } from '@/utils/settings';
 
 function App() {
@@ -8,12 +9,17 @@ function App() {
     autoRedirectUuid.getValue().then(setEnabled);
   }, []);
 
+  useEffect(() => {
+    document.documentElement.lang = browser.i18n.getUILanguage();
+    document.title = i18n.t('optionsTitle');
+  }, []);
+
   async function toggle(value: boolean) {
     setEnabled(value);
     await autoRedirectUuid.setValue(value);
   }
 
-  if (enabled === null) return <p className="muted">Loading…</p>;
+  if (enabled === null) return <p className="muted">{i18n.t('loading')}</p>;
 
   return (
     <label className="setting">
@@ -23,11 +29,8 @@ function App() {
         onChange={(event) => toggle(event.target.checked)}
       />
       <span>
-        Automatically open the regular URL for UUID links
-        <small>
-          Pull request links using {'{uuid}'} segments are redirected to
-          workspace/repo, where your review progress is stored.
-        </small>
+        {i18n.t('options.autoRedirect')}
+        <small>{i18n.t('options.autoRedirectHelp', ['{uuid}'])}</small>
       </span>
     </label>
   );

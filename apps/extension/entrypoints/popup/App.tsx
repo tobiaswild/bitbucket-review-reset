@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { i18n } from '#i18n';
 import {
   clearReviewKeys,
   fetchRepoFullName,
@@ -29,7 +30,7 @@ async function runInTab<A extends unknown[], R>(
     func,
     args,
   });
-  if (!injection) throw new Error('Could not run script in this tab.');
+  if (!injection) throw new Error(i18n.t('errors.noScriptResult'));
   return injection.result as R;
 }
 
@@ -37,6 +38,7 @@ function App() {
   const [state, setState] = useState<State>({ status: 'loading' });
 
   useEffect(() => {
+    document.documentElement.lang = browser.i18n.getUILanguage();
     (async () => {
       const [tab] = await browser.tabs.query({
         active: true,
@@ -65,7 +67,7 @@ function App() {
         pr.repo,
       ]);
       if (!fullName) {
-        throw new Error('Bitbucket did not return the repository name.');
+        throw new Error(i18n.t('errors.noRepoName'));
       }
       await browser.tabs.update(tabId, { url: withSlugs(url, fullName) });
       window.close();
@@ -87,35 +89,22 @@ function App() {
 
   switch (state.status) {
     case 'loading':
-      return <p className="muted">Loading…</p>;
+      return <p className="muted">{i18n.t('loading')}</p>;
     case 'not-pr':
-      return (
-        <p className="muted">
-          Open a Bitbucket pull request to reset its review state.
-        </p>
-      );
+      return <p className="muted">{i18n.t('popup.notPr')}</p>;
     case 'error':
       return <p className="error">{state.message}</p>;
     case 'cleared':
-      return (
-        <p className="success">
-          Cleared {state.count} {state.count === 1 ? 'entry' : 'entries'}.
-          Reloading…
-        </p>
-      );
+      return <p className="success">{i18n.t('popup.cleared', state.count)}</p>;
     case 'uuid-url':
       return (
         <>
-          <p className="muted">
-            This PR was opened through a UUID link. Bitbucket stores review
-            progress under the regular workspace/repo name, so it isn't shown
-            here.
-          </p>
+          <p className="muted">{i18n.t('popup.uuidNotice')}</p>
           <button
             type="button"
             onClick={() => openCanonical(state.tabId, state.url, state.pr)}
           >
-            Open regular URL
+            {i18n.t('popup.openRegularUrl')}
           </button>
           <p className="muted settings-link">
             <button
@@ -123,7 +112,7 @@ function App() {
               className="link"
               onClick={() => browser.runtime.openOptionsPage()}
             >
-              Redirect these automatically…
+              {i18n.t('popup.redirectAutomatically')}
             </button>
           </p>
         </>
@@ -136,7 +125,7 @@ function App() {
             {pr.workspace}/{pr.repo} <span className="pr-id">#{pr.id}</span>
           </h1>
           {keys.length === 0 ? (
-            <p className="muted">No saved review state for this PR.</p>
+            <p className="muted">{i18n.t('popup.noState')}</p>
           ) : (
             <>
               <ul className="keys">
@@ -148,7 +137,7 @@ function App() {
                 ))}
               </ul>
               <button type="button" onClick={() => reset(tabId, pr.ref)}>
-                Reset review state
+                {i18n.t('popup.reset')}
               </button>
             </>
           )}
