@@ -2,8 +2,10 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import {
   clearReviewKeys,
   isReviewKeyFor,
+  isUuidSegment,
   listReviewKeys,
   parsePrFromUrl,
+  withSlugs,
 } from './reviewState';
 
 describe('parsePrFromUrl', () => {
@@ -30,6 +32,24 @@ describe('parsePrFromUrl', () => {
     'not a url',
   ])('rejects %s', (url) => {
     expect(parsePrFromUrl(url)).toBeNull();
+  });
+});
+
+describe('UUID urls', () => {
+  const url =
+    'https://bitbucket.org/%7Bf127bac8-d9fd-4e53-8774-011767c9bc1f%7D/%7B77be549c-a043-4b4d-8b12-9b9ecf5a8d10%7D/pull-requests/2638/diff?w=1#chg-a.ts';
+
+  it('detects encoded and raw UUID segments', () => {
+    const pr = parsePrFromUrl(url);
+    expect(isUuidSegment(pr?.workspace ?? '')).toBe(true);
+    expect(isUuidSegment('{f127bac8-d9fd-4e53-8774-011767c9bc1f}')).toBe(true);
+    expect(isUuidSegment('check24')).toBe(false);
+  });
+
+  it('swaps in the slugs and keeps path, query and hash', () => {
+    expect(withSlugs(url, 'check24/mfso-mono')).toBe(
+      'https://bitbucket.org/check24/mfso-mono/pull-requests/2638/diff?w=1#chg-a.ts',
+    );
   });
 });
 
