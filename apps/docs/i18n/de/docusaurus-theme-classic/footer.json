@@ -11,6 +11,10 @@
     "message": "Einführung",
     "description": "The label of footer link with label=Introduction linking to /docs"
   },
+  "link.item.label.Privacy Policy": {
+    "message": "Datenschutzerklärung",
+    "description": "The label of footer link with label=Privacy Policy linking to /docs/privacy"
+  },
   "link.item.label.GitHub": {
     "message": "GitHub",
     "description": "The label of footer link with label=GitHub linking to https://github.com/tobiaswild/bitbucket-review-reset"
