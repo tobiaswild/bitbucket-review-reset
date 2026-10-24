@@ -97,6 +97,10 @@ const config: Config = {
               label: 'Introduction',
               to: '/docs',
             },
+            {
+              label: 'Privacy Policy',
+              to: '/docs/privacy',
+            },
           ],
         },
         {
