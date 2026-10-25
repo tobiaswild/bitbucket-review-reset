@@ -20,3 +20,10 @@ options:
   autoRedirectHelp: Pull request links using $1 segments are redirected to workspace/repo, where your review progress is stored.
   language: Language
   languageAuto: Automatic (browser language)
+  heading: Settings
+  about: About
+  version: Version $1
+  aboutText: Clears the locally stored review progress of a Bitbucket Cloud pull request. Everything stays in your browser.
+  github: Source code on GitHub
+  reportIssue: Report an issue
+  privacy: Privacy policy
