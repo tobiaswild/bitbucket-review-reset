@@ -20,11 +20,10 @@
   "devEngines": {
     "packageManager": {
       "name": "pnpm",
-      "version": "12.10.1",
+      "version": "12.15.0",
       "onFail": "download"
     }
   },
-  "packageManager": "pnpm@12.15.0",
   "type": "module",
   "devDependencies": {
     "@biomejs/biome": "2.5.15",
