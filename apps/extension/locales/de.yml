@@ -20,3 +20,10 @@ options:
   autoRedirectHelp: Pull-Request-Links mit $1-Segmenten werden auf Workspace/Repo umgeleitet, wo dein Review-Fortschritt gespeichert ist.
   language: Sprache
   languageAuto: Automatisch (Browsersprache)
+  heading: Einstellungen
+  about: Über
+  version: Version $1
+  aboutText: Setzt den lokal gespeicherten Review-Fortschritt eines Bitbucket-Cloud-Pull-Requests zurück. Alles bleibt in deinem Browser.
+  github: Quellcode auf GitHub
+  reportIssue: Problem melden
+  privacy: Datenschutzerklärung

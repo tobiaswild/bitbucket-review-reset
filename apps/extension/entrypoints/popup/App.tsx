@@ -10,7 +10,9 @@ import {
   type StoredKey,
   withSlugs,
 } from '@/utils/reviewState';
-import './App.css';
+
+const buttonClass =
+  'w-full cursor-pointer rounded bg-accent px-3 py-2 font-semibold text-accent-fg hover:bg-accent-hover';
 
 type State =
   | { status: 'loading' }
@@ -88,27 +90,28 @@ function App() {
 
   switch (state.status) {
     case 'loading':
-      return <p className="muted">{t('loading')}</p>;
+      return <p className="text-muted">{t('loading')}</p>;
     case 'not-pr':
-      return <p className="muted">{t('popup.notPr')}</p>;
+      return <p className="text-muted">{t('popup.notPr')}</p>;
     case 'error':
-      return <p className="error">{state.message}</p>;
+      return <p className="wrap-break-word text-danger">{state.message}</p>;
     case 'cleared':
-      return <p className="success">{t('popup.cleared', state.count)}</p>;
+      return <p className="text-success">{t('popup.cleared', state.count)}</p>;
     case 'uuid-url':
       return (
         <>
-          <p className="muted">{t('popup.uuidNotice')}</p>
+          <p className="text-muted">{t('popup.uuidNotice')}</p>
           <button
             type="button"
+            className={buttonClass}
             onClick={() => openCanonical(state.tabId, state.url, state.pr)}
           >
             {t('popup.openRegularUrl')}
           </button>
-          <p className="muted settings-link">
+          <p className="mt-2 text-muted">
             <button
               type="button"
-              className="link"
+              className="cursor-pointer bg-transparent p-0 text-accent underline hover:text-accent-hover"
               onClick={() => browser.runtime.openOptionsPage()}
             >
               {t('popup.redirectAutomatically')}
@@ -120,22 +123,33 @@ function App() {
       const { tabId, pr, keys } = state;
       return (
         <>
-          <h1>
-            {pr.workspace}/{pr.repo} <span className="pr-id">#{pr.id}</span>
+          <h1 className="mb-3 break-all text-sm font-semibold">
+            {pr.workspace}/{pr.repo}{' '}
+            <span className="font-normal text-muted">#{pr.id}</span>
           </h1>
           {keys.length === 0 ? (
-            <p className="muted">{t('popup.noState')}</p>
+            <p className="text-muted">{t('popup.noState')}</p>
           ) : (
             <>
-              <ul className="keys">
+              <ul className="mb-3 grid list-none grid-cols-1 gap-1 p-0">
                 {keys.map(({ key, size }) => (
-                  <li key={key} title={key}>
-                    <code>{key}</code>
-                    <span className="size">{size} B</span>
+                  <li
+                    key={key}
+                    title={key}
+                    className="flex justify-between gap-2 rounded bg-surface px-2 py-1.5"
+                  >
+                    <code className="min-w-0 truncate text-[11px]">{key}</code>
+                    <span className="shrink-0 text-[11px] text-muted">
+                      {size} B
+                    </span>
                   </li>
                 ))}
               </ul>
-              <button type="button" onClick={() => reset(tabId, pr.ref)}>
+              <button
+                type="button"
+                className={buttonClass}
+                onClick={() => reset(tabId, pr.ref)}
+              >
                 {t('popup.reset')}
               </button>
             </>
