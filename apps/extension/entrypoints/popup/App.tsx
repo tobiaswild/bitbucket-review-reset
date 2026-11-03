@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { t } from '@/utils/i18n';
+import { resolveRepoFullName } from '@/utils/repoNameCache';
 import {
   clearReviewKeys,
   fetchRepoFullName,
@@ -63,10 +64,12 @@ function App() {
 
   async function openCanonical(tabId: number, url: string, pr: PullRequest) {
     try {
-      const fullName = await runInTab(tabId, fetchRepoFullName, [
+      // `fetchRepoFullName` is async, so the injection result is a promise; the async wrapper unwraps it.
+      const fullName = await resolveRepoFullName(
         pr.workspace,
         pr.repo,
-      ]);
+        async () => runInTab(tabId, fetchRepoFullName, [pr.workspace, pr.repo]),
+      );
       if (!fullName) {
         throw new Error(t('errors.noRepoName'));
       }

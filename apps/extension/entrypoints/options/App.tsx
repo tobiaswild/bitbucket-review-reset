@@ -7,6 +7,11 @@ import {
   language,
   t,
 } from '@/utils/i18n';
+import {
+  clearRepoNameCache,
+  countCachedRepoNames,
+  repoNameCache,
+} from '@/utils/repoNameCache';
 import { autoRedirectUuid } from '@/utils/settings';
 
 const REPO_URL = 'https://github.com/tobiaswild/bitbucket-review-reset';
@@ -20,6 +25,7 @@ const LINKS = [
 
 function App() {
   const [enabled, setEnabled] = useState<boolean | null>(null);
+  const [cachedCount, setCachedCount] = useState<number | null>(null);
   const [selectedLanguage, setSelectedLanguage] = useState<Language | null>(
     null,
   );
@@ -27,6 +33,9 @@ function App() {
   useEffect(() => {
     autoRedirectUuid.getValue().then(setEnabled);
     language.getValue().then(setSelectedLanguage);
+    const refreshCount = () => countCachedRepoNames().then(setCachedCount);
+    refreshCount();
+    return repoNameCache.watch(refreshCount);
   }, []);
 
   useEffect(() => {
@@ -38,13 +47,18 @@ function App() {
     await autoRedirectUuid.setValue(value);
   }
 
+  async function clearCache() {
+    await clearRepoNameCache();
+    setCachedCount(0);
+  }
+
   async function changeLanguage(value: Language) {
     await language.setValue(value);
     await initI18n();
     setSelectedLanguage(value);
   }
 
-  if (enabled === null || selectedLanguage === null) {
+  if (enabled === null || selectedLanguage === null || cachedCount === null) {
     return <p className="text-muted">{t('loading')}</p>;
   }
 
@@ -65,6 +79,22 @@ function App() {
           </small>
         </span>
       </label>
+      <div className="mt-3 flex items-start justify-between gap-4">
+        <span>
+          {t('options.repoNameCache', cachedCount)}
+          <small className="block text-muted">
+            {t('options.repoNameCacheHelp')}
+          </small>
+        </span>
+        <button
+          type="button"
+          className="shrink-0 cursor-pointer rounded border border-current px-2 py-1 text-accent hover:text-accent-hover disabled:cursor-default disabled:opacity-50"
+          disabled={cachedCount === 0}
+          onClick={clearCache}
+        >
+          {t('options.clearRepoNameCache')}
+        </button>
+      </div>
       <label className="mt-3 flex items-center gap-2">
         <span>{t('options.language')}</span>
         <select

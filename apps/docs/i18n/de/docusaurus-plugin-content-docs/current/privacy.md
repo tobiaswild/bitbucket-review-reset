@@ -5,7 +5,7 @@ title: Datenschutzerklärung
 
 # Datenschutzerklärung
 
-_Zuletzt aktualisiert: 24. Oktober 2026_
+_Zuletzt aktualisiert: 3. November 2026_
 
 Bitbucket Review Reset erhebt, speichert und überträgt keine personenbezogenen Daten. Es gibt
 keine Analyse, kein Tracking, keine Telemetrie und keinen Server dieses Projekts. Alles, was die
@@ -28,6 +28,13 @@ die API von Bitbucket selbst (`/!api/2.0/repositories/…`) nach dem Repository-
 Bitbucket-Tab heraus und mit der Sitzung, in der du bereits angemeldet bist. Diese Anfrage geht
 an `bitbucket.org` und nirgendwo sonst.
 
+Damit der nächste Link auf dasselbe Repository sofort weitergeleitet werden kann, merkt sich die
+Erweiterung den ermittelten Namen zusammen mit den UUIDs aus dem Link – höchstens 14 Tage lang und
+für maximal 200 Repositories. Diese Namen werden über die `storage.local`-API des Browsers
+gespeichert, bleiben also auf diesem Gerät und werden nicht synchronisiert. Auf der
+Einstellungsseite der Erweiterung siehst du, wie viele gespeichert sind, und kannst sie jederzeit
+mit **Leeren** löschen.
+
 ### Deine Einstellungen
 
 Gespeichert werden zwei Einstellungen: ob UUID-Links automatisch weitergeleitet werden, und die
@@ -41,7 +48,7 @@ zwischen deinen eigenen Geräten. Sie enthalten keine personenbezogenen Daten.
 | --- | --- |
 | `activeTab` | Die Adresse des aktuellen Tabs lesen, sobald du auf das Symbol in der Leiste klickst, damit die Erweiterung weiß, welchen Pull Request du ansiehst. |
 | `scripting` | Eine kurze Funktion im Bitbucket-Tab ausführen, um die Einträge zum Review-Status aufzulisten und zu löschen. |
-| `storage` | Die beiden oben beschriebenen Einstellungen speichern. |
+| `storage` | Die beiden Einstellungen und die gemerkten Repository-Namen speichern, die oben beschrieben sind. |
 | `https://bitbucket.org/*` | Damit die Erweiterung auf Pull-Request-Seiten von Bitbucket funktioniert und UUID-Links umschreiben kann. |
 
 ## Weitergabe von Daten

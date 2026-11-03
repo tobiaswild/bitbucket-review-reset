@@ -18,6 +18,11 @@ errors:
 options:
   autoRedirect: Für UUID-Links automatisch die reguläre URL öffnen
   autoRedirectHelp: Pull-Request-Links mit $1-Segmenten werden auf Workspace/Repo umgeleitet, wo dein Review-Fortschritt gespeichert ist.
+  repoNameCache:
+    1: $1 Repository-Name für UUID-Links gemerkt
+    n: $1 Repository-Namen für UUID-Links gemerkt
+  repoNameCacheHelp: Aus UUID-Links ermittelte Namen werden 14 Tage lang in diesem Browser gespeichert, damit die Weiterleitung Bitbucket nicht erneut fragen muss.
+  clearRepoNameCache: Leeren
   language: Sprache
   languageAuto: Automatisch (Browsersprache)
   heading: Einstellungen
