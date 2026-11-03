@@ -22,10 +22,9 @@ export function parsePrFromUrl(url: string): PullRequest | null {
   }
   if (parsed.hostname !== 'bitbucket.org') return null;
 
-  const match = parsed.pathname.match(PR_PATH);
-  if (!match) return null;
+  const [, workspace, repo, id] = parsed.pathname.match(PR_PATH) ?? [];
+  if (!workspace || !repo || !id) return null;
 
-  const [, workspace, repo, id] = match as [string, string, string, string];
   return { workspace, repo, id, ref: `${workspace}/${repo}/${id}` };
 }
 
@@ -91,8 +90,11 @@ export async function fetchRepoFullName(
     { credentials: 'same-origin' },
   );
   if (!response.ok) return null;
-  const body = (await response.json()) as { full_name?: unknown };
-  const fullName = body.full_name;
+  const body: unknown = await response.json();
+  const fullName =
+    typeof body === 'object' && body !== null && 'full_name' in body
+      ? body.full_name
+      : undefined;
   return typeof fullName === 'string' &&
     /^[\w-][\w.-]*\/[\w-][\w.-]*$/.test(fullName)
     ? fullName

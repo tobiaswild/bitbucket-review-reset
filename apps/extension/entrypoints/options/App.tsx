@@ -1,5 +1,12 @@
 import { useEffect, useState } from 'react';
-import { initI18n, LANGUAGES, type Language, language, t } from '@/utils/i18n';
+import {
+  initI18n,
+  isLanguage,
+  LANGUAGES,
+  type Language,
+  language,
+  t,
+} from '@/utils/i18n';
 import { autoRedirectUuid } from '@/utils/settings';
 
 const REPO_URL = 'https://github.com/tobiaswild/bitbucket-review-reset';
@@ -62,7 +69,10 @@ function App() {
         <span>{t('options.language')}</span>
         <select
           value={selectedLanguage}
-          onChange={(event) => changeLanguage(event.target.value as Language)}
+          onChange={(event) => {
+            const { value } = event.target;
+            if (isLanguage(value)) changeLanguage(value);
+          }}
         >
           <option value="auto">{t('options.languageAuto')}</option>
           {LANGUAGES.map(({ code, label }) => (

@@ -15,6 +15,10 @@ export const LANGUAGES = [
 
 export type Language = 'auto' | (typeof LANGUAGES)[number]['code'];
 
+export function isLanguage(value: string): value is Language {
+  return value === 'auto' || LANGUAGES.some(({ code }) => code === value);
+}
+
 /** UI language: `auto` follows the browser, anything else is fixed. */
 export const language = storage.defineItem<Language>('sync:language', {
   fallback: 'auto',
