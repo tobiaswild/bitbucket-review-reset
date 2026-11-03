@@ -6,8 +6,14 @@ import {
   UNDO_MENU_ID,
 } from '@/utils/contextMenu';
 import { isDidResetMessage, isReviewStateMessage } from '@/utils/messages';
+import { invalidateRepoName, syncRedirectRules } from '@/utils/redirectRules';
+import { repoNameCache } from '@/utils/repoNameCache';
+import { isInvalidateMessage } from '@/utils/repoVerification';
 import { afterPageReset, resetTab, undoTab } from '@/utils/reset';
+import { autoRedirectUuid } from '@/utils/settings';
 import { watchBackup } from '@/utils/undo';
+
+const SYNC_ALARM = 'sync-redirect-rules';
 
 type TabAction = (tab?: Browser.tabs.Tab) => Promise<void>;
 
@@ -39,11 +45,35 @@ export default defineBackground(() => {
     });
   watchBackup(syncMenu);
 
+  // Redirect rules mirror the repo name cache: rebuild whenever it or the setting changes, and
+  // hourly so entries past their TTL stop redirecting.
+  const syncRules = () => {
+    syncRedirectRules().catch((error) =>
+      console.error('Could not update redirect rules', error),
+    );
+  };
+  repoNameCache.watch(syncRules);
+  autoRedirectUuid.watch(syncRules);
+  browser.runtime.onInstalled.addListener(syncRules);
+  browser.runtime.onStartup.addListener(syncRules);
+  browser.alarms.create(SYNC_ALARM, { periodInMinutes: 60 });
+  browser.alarms.onAlarm.addListener((alarm) => {
+    if (alarm.name === SYNC_ALARM) syncRules();
+  });
+
   browser.contextMenus.onClicked.addListener((info, tab) => {
     ACTIONS[String(info.menuItemId)]?.(tab);
   });
 
   browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
+    if (isInvalidateMessage(message)) {
+      if (!sender.url?.startsWith('https://bitbucket.org/')) return;
+      invalidateRepoName(message.key).then(
+        (redirectBack) => sendResponse({ redirectBack }),
+        () => sendResponse({ redirectBack: false }),
+      );
+      return true; // keeps sendResponse alive for the async reply
+    }
     const tab = sender.tab;
     if (sender.id !== browser.runtime.id || !tab?.id) return;
     if (isReviewStateMessage(message)) {
