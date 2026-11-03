@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { createTranslate } from './i18n';
+import { createTranslate, isLanguage } from './i18n';
 
 const t = createTranslate({
   hello: { message: 'Hello' },
@@ -25,5 +25,15 @@ describe('createTranslate', () => {
 
   it('returns the key for unknown messages', () => {
     expect(t('missing')).toBe('missing');
+  });
+});
+
+describe('isLanguage', () => {
+  it.each(['auto', 'en', 'de'])('accepts %s', (value) => {
+    expect(isLanguage(value)).toBe(true);
+  });
+
+  it.each(['', 'fr', 'EN', 'toString'])('rejects %j', (value) => {
+    expect(isLanguage(value)).toBe(false);
   });
 });
