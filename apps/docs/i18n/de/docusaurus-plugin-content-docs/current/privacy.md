@@ -35,6 +35,12 @@ gespeichert, bleiben also auf diesem Gerät und werden nicht synchronisiert. Auf
 Einstellungsseite der Erweiterung siehst du, wie viele gespeichert sind, und kannst sie jederzeit
 mit **Leeren** löschen.
 
+Solange die automatische Weiterleitung aktiviert ist, wird jeder gemerkte Name außerdem als
+Weiterleitungsregel an den Browser übergeben, damit spätere UUID-Links direkt die reguläre
+Adresse öffnen. Öffnest du einen Pull Request unter einem gemerkten Namen, fragt die Erweiterung
+die API von Bitbucket auf dieselbe Weise wie oben, ob es noch dasselbe Repository ist. Wurde es
+umbenannt oder entfernt, werden der Eintrag und seine Regel gelöscht und der Link neu aufgelöst.
+
 ### Deine Einstellungen
 
 Gespeichert werden zwei Einstellungen: ob UUID-Links automatisch weitergeleitet werden, und die
@@ -47,6 +53,8 @@ zwischen deinen eigenen Geräten. Sie enthalten keine personenbezogenen Daten.
 | Berechtigung | Wofür sie gebraucht wird |
 | --- | --- |
 | `activeTab` | Die Adresse des aktuellen Tabs lesen, sobald du auf das Symbol in der Leiste klickst, damit die Erweiterung weiß, welchen Pull Request du ansiehst. |
+| `alarms` | Weiterleitungsregeln für gemerkte Namen entfernen, sobald diese älter als 14 Tage sind. |
+| `declarativeNetRequestWithHostAccess` | Den Browser UUID-Links für gemerkte Repositories weiterleiten lassen, bevor die Seite lädt. Gilt nur für `bitbucket.org`. |
 | `scripting` | Eine kurze Funktion im Bitbucket-Tab ausführen, um die Einträge zum Review-Status aufzulisten und zu löschen. |
 | `storage` | Die beiden Einstellungen und die gemerkten Repository-Namen speichern, die oben beschrieben sind. |
 | `https://bitbucket.org/*` | Damit die Erweiterung auf Pull-Request-Seiten von Bitbucket funktioniert und UUID-Links umschreiben kann. |

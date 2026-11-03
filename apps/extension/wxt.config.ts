@@ -11,6 +11,13 @@ export default defineConfig({
     default_locale: 'en',
     name: '__MSG_extName__',
     description: '__MSG_extDescription__',
-    permissions: ['activeTab', 'scripting', 'storage'],
+    permissions: [
+      'activeTab',
+      'alarms',
+      'declarativeNetRequestWithHostAccess',
+      'scripting',
+      'storage',
+    ],
+    host_permissions: ['https://bitbucket.org/*'],
   },
 });

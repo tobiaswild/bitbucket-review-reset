@@ -34,6 +34,12 @@ repositories. These names are kept with the browser's `storage.local` API, so th
 device and are not synced. You can see how many are stored and delete them at any time with
 **Clear** on the extension's settings page.
 
+While automatic redirects are switched on, each remembered name is also handed to the browser
+as a redirect rule, so later UUID links open the regular address directly. When you open a pull
+request under a remembered name, the extension asks Bitbucket's API, in the same way as above,
+whether it is still the same repository; if it was renamed or removed, the entry and its rule
+are deleted and the link is resolved again.
+
 ### Your settings
 
 Two preferences are stored: whether UUID links are redirected automatically, and the interface
@@ -46,6 +52,8 @@ They contain no personal data.
 | Permission | Why it is needed |
 | --- | --- |
 | `activeTab` | Read the address of the current tab once you click the toolbar icon, so the extension knows which pull request you are looking at. |
+| `alarms` | Remove redirect rules for remembered names once they are older than 14 days. |
+| `declarativeNetRequestWithHostAccess` | Let the browser redirect UUID links for remembered repositories before the page loads. It only applies to `bitbucket.org`. |
 | `scripting` | Run a short function inside the Bitbucket tab to list and clear the review-state entries. |
 | `storage` | Save the two settings and the remembered repository names described above. |
 | `https://bitbucket.org/*` | Let the extension work on Bitbucket pull request pages and rewrite UUID links. |

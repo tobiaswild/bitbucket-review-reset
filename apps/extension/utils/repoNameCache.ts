@@ -83,11 +83,41 @@ export async function cacheRepoName(
   );
 }
 
+export interface CachedRepoName {
+  /** Normalized `workspace/repo` URL segments, see {@link cacheKey}. */
+  key: string;
+  fullName: string;
+}
+
+/** Entries still within their TTL, newest first. */
+export async function listCachedRepoNames(
+  now = Date.now(),
+): Promise<CachedRepoName[]> {
+  return Object.entries(await readCache())
+    .filter((pair): pair is [string, CacheEntry] => {
+      const [, entry] = pair;
+      return isCacheEntry(entry) && isFresh(entry, now);
+    })
+    .sort(([, a], [, b]) => b.savedAt - a.savedAt)
+    .map(([key, { fullName }]) => ({ key, fullName }));
+}
+
 /** Number of entries still within their TTL. */
 export async function countCachedRepoNames(now = Date.now()): Promise<number> {
-  return Object.values(await readCache()).filter(
-    (entry) => isCacheEntry(entry) && isFresh(entry, now),
-  ).length;
+  return (await listCachedRepoNames(now)).length;
+}
+
+export async function removeCachedRepoName(key: string): Promise<void> {
+  const cache = await readCache();
+  if (!(key in cache)) return;
+  delete cache[key];
+  await repoNameCache.setValue(
+    Object.fromEntries(
+      Object.entries(cache).filter((pair): pair is [string, CacheEntry] =>
+        isCacheEntry(pair[1]),
+      ),
+    ),
+  );
 }
 
 export async function clearRepoNameCache(): Promise<void> {
