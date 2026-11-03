@@ -74,16 +74,27 @@ export function clearReviewKeys(ref: string): number {
   return keys.length;
 }
 
-/** Injected into a bitbucket.org tab; uses the page's session to resolve UUIDs to `workspace/repo` slugs. */
+/**
+ * Injected into a bitbucket.org tab; uses the page's session to resolve UUIDs to `workspace/repo` slugs.
+ * Only accepts `{uuid}` or slug-shaped segments, so a crafted link can't steer the request to another
+ * API path, and only returns a `workspace/repo`-shaped name.
+ */
 export async function fetchRepoFullName(
   workspace: string,
   repo: string,
 ): Promise<string | null> {
+  const segment = /^(?:(?:\{|%7B)[0-9a-f-]{36}(?:\}|%7D)|[\w-][\w.-]*)$/i;
+  if (!segment.test(workspace) || !segment.test(repo)) return null;
+
   const response = await fetch(
     `/!api/2.0/repositories/${workspace}/${repo}?fields=full_name`,
     { credentials: 'same-origin' },
   );
   if (!response.ok) return null;
-  const body = (await response.json()) as { full_name?: string };
-  return body.full_name ?? null;
+  const body = (await response.json()) as { full_name?: unknown };
+  const fullName = body.full_name;
+  return typeof fullName === 'string' &&
+    /^[\w-][\w.-]*\/[\w-][\w.-]*$/.test(fullName)
+    ? fullName
+    : null;
 }

@@ -1,6 +1,7 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import {
   clearReviewKeys,
+  fetchRepoFullName,
   isReviewKeyFor,
   isUuidSegment,
   listReviewKeys,
@@ -124,5 +125,67 @@ describe('page scripts', () => {
       'check24/mfso-mono/16440:files-reviewed-state',
       'theme',
     ]);
+  });
+});
+
+describe('fetchRepoFullName', () => {
+  const wsUuid = '%7Bf127bac8-d9fd-4e53-8774-011767c9bc1f%7D';
+  const repoUuid = '{77be549c-a043-4b4d-8b12-9b9ecf5a8d10}';
+
+  afterEach(() => vi.unstubAllGlobals());
+
+  function stubFetch(body: unknown, ok = true) {
+    const fetch = vi.fn(async () => ({ ok, json: async () => body }));
+    vi.stubGlobal('fetch', fetch);
+    return fetch;
+  }
+
+  it('requests the repository endpoint and returns the slug', async () => {
+    const fetch = stubFetch({ full_name: 'check24/mfso-mono' });
+    await expect(fetchRepoFullName(wsUuid, repoUuid)).resolves.toBe(
+      'check24/mfso-mono',
+    );
+    expect(fetch).toHaveBeenCalledWith(
+      `/!api/2.0/repositories/${wsUuid}/${repoUuid}?fields=full_name`,
+      { credentials: 'same-origin' },
+    );
+  });
+
+  it('accepts a slug next to a UUID', async () => {
+    stubFetch({ full_name: 'check24/mfso_mono.v2' });
+    await expect(fetchRepoFullName(wsUuid, 'mfso_mono.v2')).resolves.toBe(
+      'check24/mfso_mono.v2',
+    );
+  });
+
+  it.each([
+    'a%2F..%2F..%2Fusers',
+    '..',
+    '.hidden',
+    'repo%3Ffields=x',
+    'repo?x',
+    '',
+  ])('does not request with segment %j', async (repo) => {
+    const fetch = stubFetch({ full_name: 'check24/mfso-mono' });
+    await expect(fetchRepoFullName(wsUuid, repo)).resolves.toBeNull();
+    expect(fetch).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    '//evil.com',
+    'https://evil.com',
+    'check24/mfso-mono/extra',
+    '../x',
+    'check24',
+    42,
+    null,
+  ])('rejects full_name %j', async (fullName) => {
+    stubFetch({ full_name: fullName });
+    await expect(fetchRepoFullName(wsUuid, repoUuid)).resolves.toBeNull();
+  });
+
+  it('returns null on an error response', async () => {
+    stubFetch({ full_name: 'check24/mfso-mono' }, false);
+    await expect(fetchRepoFullName(wsUuid, repoUuid)).resolves.toBeNull();
   });
 });
