@@ -253,8 +253,8 @@ importers:
         specifier: ^1.1.5
         version: 1.2.2(vite@8.3.3(@types/node@26.6.4)(jiti@2.7.0)(terser@5.51.2)(yaml@2.9.1))(wxt@0.21.5(@rspack/core@1.7.12)(eslint@9.39.4(jiti@2.7.0)(supports-color@7.2.0))(oxc-parser@0.155.0)(rolldown@1.2.12)(typescript@7.0.2)(vite@8.3.3(@types/node@26.6.4)(jiti@2.7.0)(terser@5.51.2)(yaml@2.9.1))(web-ext@10.8.0(jiti@2.7.0)(supports-color@7.2.0))(webpack@5.112.0(@swc/core@1.16.20)(@swc/html@1.16.20)(clean-css@5.3.3)(cssnano@6.1.2(postcss@8.5.29))(csso@5.0.5)(html-minifier-terser@7.2.0)(lightningcss@1.33.0)(postcss@8.5.29)(svgo@3.3.5)))
       tailwindcss:
-        specifier: ^4.3.3
-        version: 4.3.3
+        specifier: ^4.3.5
+        version: 4.3.5
       typescript:
         specifier: ^7.0.2
         version: 7.0.2
@@ -7012,6 +7012,9 @@ packages:
 
   tailwindcss@4.3.3:
     resolution: {integrity: sha512-gOhV3P7ufE62QDGg1zVaTgCR+EtPv92k2nIhVcVKcLmxT1sUBsQGhnZj175j+MqRt4zLF7ic+sCYjfhxMxj7YQ==}
+
+  tailwindcss@4.3.5:
+    resolution: {integrity: sha512-FcQk9BuffmEHJP2G0XmB2SplU1aLTI7j07Kunk+U74Ny+XiWOtzXz9aujFZ/avntw1e2cOv/3PkgzflQ7gX2vQ==}
 
   tapable@2.3.3:
     resolution: {integrity: sha512-uxc/zpqFg6x7C8vOE7lh6Lbda8eEL9zmVm/PLeTPBRhh1xCgdWaQ+J1CUieGpIfm2HdtsUpRv+HshiasBMcc6A==}
@@ -15922,6 +15925,8 @@ snapshots:
       webpack: 5.112.0(@swc/core@1.16.20)(@swc/html@1.16.20)(clean-css@5.3.3)(cssnano@6.1.2(postcss@8.5.29))(csso@5.0.5)(html-minifier-terser@7.2.0)(lightningcss@1.33.0)(postcss@8.5.29)(svgo@3.3.5)
 
   tailwindcss@4.3.3: {}
+
+  tailwindcss@4.3.5: {}
 
   tapable@2.3.3: {}
 
