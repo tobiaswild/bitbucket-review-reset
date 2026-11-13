@@ -7,6 +7,10 @@ popup:
   cleared:
     1: Cleared $1 entry. Reloading…
     n: Cleared $1 entries. Reloading…
+  clearedNoReload:
+    1: Cleared $1 entry. Reload the page to apply.
+    n: Cleared $1 entries. Reload the page to apply.
+  reloadNow: Reload now
   uuidNotice: This PR was opened through a UUID link. Bitbucket stores review progress under the regular workspace/repo name, so it isn't shown here.
   openRegularUrl: Open regular URL
   redirectAutomatically: Redirect these automatically…
@@ -25,6 +29,8 @@ errors:
 options:
   autoRedirect: Automatically open the regular URL for UUID links
   autoRedirectHelp: Pull request links using $1 segments are redirected to workspace/repo, where your review progress is stored.
+  reloadAfterReset: Reload the page after resetting
+  reloadAfterResetHelp: Turn this off to finish e.g. an unsent comment first. Bitbucket shows the cleared state after the next reload.
   language: Language
   languageAuto: Automatic (browser language)
   heading: Settings

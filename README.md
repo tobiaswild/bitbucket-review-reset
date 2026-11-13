@@ -19,7 +19,8 @@ current tab.
 ## Usage
 
 Open a pull request on `bitbucket.org`, click the toolbar icon, review the
-listed keys and hit **Reset review state**. The page reloads afterwards.
+listed keys and hit **Reset review state**. The page reloads afterwards,
+unless you turn that off in the settings.
 
 Bitbucket keeps the review progress in `localStorage` under three keys per PR:
 

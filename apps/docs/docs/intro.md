@@ -17,4 +17,4 @@ Bitbucket keeps this in `localStorage` under three keys per PR:
 
 ## Usage
 
-Open a PR, click the toolbar icon, review the listed keys and hit **Reset review state**. The page reloads afterwards.
+Open a PR, click the toolbar icon, review the listed keys and hit **Reset review state**. The page reloads afterwards, unless you turn that off in the settings. Without the reload, Bitbucket shows the cleared state the next time the page loads.
