@@ -11,6 +11,16 @@ popup:
     1: $1 Eintrag gelöscht. Lade die Seite neu, damit es wirkt.
     n: $1 Einträge gelöscht. Lade die Seite neu, damit es wirkt.
   reloadNow: Jetzt neu laden
+  restored:
+    1: $1 Eintrag wiederhergestellt. Seite wird neu geladen…
+    n: $1 Einträge wiederhergestellt. Seite wird neu geladen…
+  restoredNoReload:
+    1: $1 Eintrag wiederhergestellt. Lade die Seite neu, damit es wirkt.
+    n: $1 Einträge wiederhergestellt. Lade die Seite neu, damit es wirkt.
+  undo: Rückgängig
+  undoLastReset:
+    1: Letztes Zurücksetzen rückgängig machen ($1 Eintrag)
+    n: Letztes Zurücksetzen rückgängig machen ($1 Einträge)
   uuidNotice: Dieser PR wurde über einen UUID-Link geöffnet. Bitbucket speichert den Review-Fortschritt unter dem regulären Workspace-/Repo-Namen, daher wird er hier nicht angezeigt.
   openRegularUrl: Reguläre URL öffnen
   redirectAutomatically: Diese automatisch weiterleiten…

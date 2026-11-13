@@ -118,12 +118,33 @@ export function listReviewKeys(ref: string): StoredKey[] {
     });
 }
 
-export function clearReviewKeys(ref: string): number {
+/** Removes the PR's keys and returns what they held, so the reset can be undone. */
+export function clearReviewKeys(ref: string): Record<string, string> {
   const escaped = ref.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   const pattern = new RegExp(`(^|:)${escaped}(:|$)`);
-  const keys = Object.keys(localStorage).filter((key) => pattern.test(key));
-  for (const key of keys) localStorage.removeItem(key);
-  return keys.length;
+  const removed: Record<string, string> = {};
+  for (const key of Object.keys(localStorage)) {
+    if (!pattern.test(key)) continue;
+    removed[key] = localStorage.getItem(key) ?? '';
+    localStorage.removeItem(key);
+  }
+  return removed;
+}
+
+/** Writes back entries from `clearReviewKeys`; skips keys that don't belong to `ref`. */
+export function restoreReviewKeys(
+  ref: string,
+  entries: Record<string, string>,
+): number {
+  const escaped = ref.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const pattern = new RegExp(`(^|:)${escaped}(:|$)`);
+  let count = 0;
+  for (const [key, value] of Object.entries(entries)) {
+    if (!pattern.test(key) || typeof value !== 'string') continue;
+    localStorage.setItem(key, value);
+    count++;
+  }
+  return count;
 }
 
 /**

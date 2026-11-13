@@ -7,6 +7,7 @@ import {
   isUuidSegment,
   listReviewKeys,
   parsePrFromUrl,
+  restoreReviewKeys,
   withSlugs,
 } from './reviewState';
 
@@ -168,13 +169,36 @@ describe('page scripts', () => {
     ]);
   });
 
-  it('clears only the PR keys', () => {
+  it('clears only the PR keys and returns their values', () => {
     const storage = seed();
-    expect(clearReviewKeys('check24/mfso-mono/1644')).toBe(3);
+    expect(clearReviewKeys('check24/mfso-mono/1644')).toEqual({
+      'check24/mfso-mono/1644:files-reviewed-state': '{"a.ts":true}',
+      'last-reviewed-commit:check24/mfso-mono/1644': 'abc123',
+      '__storejs_expire_mixin_last-reviewed-commit:check24/mfso-mono/1644': '1',
+    });
     expect(Object.keys(storage).sort()).toEqual([
       'check24/mfso-mono/16440:files-reviewed-state',
       'theme',
     ]);
+  });
+
+  it('restores cleared keys', () => {
+    const storage = seed();
+    const before = { ...storage };
+    const removed = clearReviewKeys('check24/mfso-mono/1644');
+    expect(restoreReviewKeys('check24/mfso-mono/1644', removed)).toBe(3);
+    expect({ ...storage }).toEqual(before);
+  });
+
+  it('does not restore keys of other PRs', () => {
+    const storage = seed();
+    expect(
+      restoreReviewKeys('check24/mfso-mono/1644', {
+        theme: 'light',
+        'last-reviewed-commit:check24/mfso-mono/1645': 'x',
+      }),
+    ).toBe(0);
+    expect(storage.getItem('theme')).toBe('dark');
   });
 });
 
