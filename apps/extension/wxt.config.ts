@@ -17,6 +17,10 @@ export default defineConfig({
         suggested_key: { default: 'Alt+Shift+R' },
         description: '__MSG_commandReset__',
       },
+      'undo-reset': {
+        suggested_key: { default: 'Alt+Shift+U' },
+        description: '__MSG_commandUndo__',
+      },
     },
     ...(browser === 'firefox' && {
       browser_specific_settings: {

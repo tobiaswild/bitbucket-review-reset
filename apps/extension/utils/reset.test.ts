@@ -1,9 +1,9 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { fakeBrowser } from 'wxt/testing/fake-browser';
-import { resetTab } from './reset';
+import { resetTab, undoTab } from './reset';
 import { reloadAfterReset } from './settings';
 import { runInTab } from './tabs';
-import { getBackup } from './undo';
+import { getBackup, saveBackup } from './undo';
 
 vi.mock('./tabs', () => ({ runInTab: vi.fn() }));
 
@@ -52,5 +52,35 @@ describe('resetTab', () => {
       url: 'https://bitbucket.org/%7Bf127bac8-d9fd-4e53-8774-011767c9bc1f%7D/repo/pull-requests/7',
     } as Browser.tabs.Tab);
     expect(runInTab).not.toHaveBeenCalled();
+  });
+});
+
+describe('undoTab', () => {
+  beforeEach(() => {
+    fakeBrowser.reset();
+    vi.mocked(runInTab).mockReset().mockResolvedValue(1);
+    vi.spyOn(fakeBrowser.tabs, 'reload').mockResolvedValue();
+    vi.spyOn(fakeBrowser.action, 'setBadgeText').mockResolvedValue();
+  });
+
+  it('writes the backup back, forgets it and reloads', async () => {
+    await saveBackup('ws/repo/7', entries);
+    await undoTab({ id: 3, url } as Browser.tabs.Tab);
+    expect(runInTab).toHaveBeenCalledWith(3, expect.any(Function), [
+      'ws/repo/7',
+      entries,
+    ]);
+    await expect(getBackup('ws/repo/7')).resolves.toBeNull();
+    expect(fakeBrowser.tabs.reload).toHaveBeenCalledWith(3);
+  });
+
+  it('only marks the icon when there is nothing to undo', async () => {
+    await saveBackup('ws/repo/8', entries);
+    await undoTab({ id: 3, url } as Browser.tabs.Tab);
+    expect(runInTab).not.toHaveBeenCalled();
+    expect(fakeBrowser.action.setBadgeText).toHaveBeenCalledWith({
+      tabId: 3,
+      text: '–',
+    });
   });
 });

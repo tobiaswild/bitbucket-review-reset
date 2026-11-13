@@ -2,10 +2,11 @@ import {
   clearReviewKeys,
   isUuidSegment,
   parsePrFromUrl,
+  restoreReviewKeys,
 } from '@/utils/reviewState';
 import { reloadAfterReset } from '@/utils/settings';
 import { runInTab } from '@/utils/tabs';
-import { type Entries, saveBackup } from '@/utils/undo';
+import { clearBackup, type Entries, getBackup, saveBackup } from '@/utils/undo';
 
 /** Clears the PR's review keys in the tab (all, or only `only`) and keeps them for undo. */
 export async function clearWithBackup(
@@ -44,6 +45,26 @@ export async function resetTab(tab: Browser.tabs.Tab | undefined) {
     else await flashBadge(tab.id, '✓');
   } catch (error) {
     console.error('[bitbucket-review-reset] reset failed', error);
+    await flashBadge(tab.id, '!');
+  }
+}
+
+/** Writes back the last reset of the PR open in `tab`, if it is still within the undo window. */
+export async function undoTab(tab: Browser.tabs.Tab | undefined) {
+  const pr = tab?.url ? parsePrFromUrl(tab.url) : null;
+  if (!tab?.id || !pr) return;
+  const backup = await getBackup(pr.ref);
+  if (!backup) {
+    await flashBadge(tab.id, '–');
+    return;
+  }
+  try {
+    await runInTab(tab.id, restoreReviewKeys, [pr.ref, backup]);
+    await clearBackup();
+    if (await reloadAfterReset.getValue()) await browser.tabs.reload(tab.id);
+    else await flashBadge(tab.id, '↺');
+  } catch (error) {
+    console.error('[bitbucket-review-reset] undo failed', error);
     await flashBadge(tab.id, '!');
   }
 }

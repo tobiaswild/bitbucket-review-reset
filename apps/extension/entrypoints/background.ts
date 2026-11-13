@@ -1,7 +1,10 @@
 import { t } from '@/utils/i18n';
-import { resetTab } from '@/utils/reset';
+import { resetTab, undoTab } from '@/utils/reset';
 
-const RESET_COMMAND = 'reset-review';
+const COMMANDS: Record<string, (tab?: Browser.tabs.Tab) => Promise<void>> = {
+  'reset-review': resetTab,
+  'undo-reset': undoTab,
+};
 const MENU_ID = 'reset-review';
 
 export default defineBackground(() => {
@@ -19,10 +22,11 @@ export default defineBackground(() => {
   });
 
   browser.commands.onCommand.addListener(async (command, tab) => {
-    if (command !== RESET_COMMAND) return;
+    const run = COMMANDS[command];
+    if (!run) return;
     const [active] = tab
       ? [tab]
       : await browser.tabs.query({ active: true, currentWindow: true });
-    await resetTab(active);
+    await run(active);
   });
 });

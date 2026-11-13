@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { Fragment, useEffect, useState } from 'react';
 import { t } from '@/utils/i18n';
 
 /** Opens the browser's own page for changing extension shortcuts. */
@@ -11,27 +11,46 @@ function openShortcutSettings() {
   return browser.tabs.create({ url: 'chrome://extensions/shortcuts' });
 }
 
+const COMMANDS = [
+  { name: 'reset-review', label: 'options.shortcutReset' },
+  { name: 'undo-reset', label: 'options.shortcutUndo' },
+] as const;
+
 export function Shortcut() {
-  const [shortcut, setShortcut] = useState<string | null>(null);
+  const [shortcuts, setShortcuts] = useState<Record<string, string> | null>(
+    null,
+  );
 
   useEffect(() => {
     browser.commands.getAll().then((commands) => {
-      const reset = commands.find(({ name }) => name === 'reset-review');
-      setShortcut(reset?.shortcut ?? '');
+      setShortcuts(
+        Object.fromEntries(
+          commands.map(({ name, shortcut }) => [name ?? '', shortcut ?? '']),
+        ),
+      );
     });
   }, []);
 
-  if (shortcut === null) return null;
+  if (shortcuts === null) return null;
   return (
-    <p className="mt-3">
-      {t('options.shortcut')}{' '}
-      {shortcut ? (
-        <kbd className="rounded bg-surface px-1.5 py-0.5 font-mono text-[12px]">
-          {shortcut}
-        </kbd>
-      ) : (
-        <span className="text-muted">{t('options.shortcutNone')}</span>
-      )}
+    <div className="mt-3">
+      <p className="m-0">{t('options.shortcuts')}</p>
+      <dl className="my-1 grid grid-cols-[auto_1fr] items-center gap-x-3 gap-y-1">
+        {COMMANDS.map(({ name, label }) => (
+          <Fragment key={name}>
+            <dt>
+              {shortcuts[name] ? (
+                <kbd className="rounded bg-surface px-1.5 py-0.5 font-mono text-[12px]">
+                  {shortcuts[name]}
+                </kbd>
+              ) : (
+                <span className="text-muted">{t('options.shortcutNone')}</span>
+              )}
+            </dt>
+            <dd className="m-0">{t(label)}</dd>
+          </Fragment>
+        ))}
+      </dl>
       <small className="block text-muted">
         {t('options.shortcutHelp')}{' '}
         <button
@@ -42,6 +61,6 @@ export function Shortcut() {
           {t('options.shortcutChange')}
         </button>
       </small>
-    </p>
+    </div>
   );
 }
