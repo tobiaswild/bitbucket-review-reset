@@ -11,7 +11,15 @@ export default defineConfig({
     default_locale: 'en',
     name: '__MSG_extName__',
     description: '__MSG_extDescription__',
-    permissions: ['activeTab', 'contextMenus', 'scripting', 'storage'],
+    permissions: [
+      'activeTab',
+      'alarms',
+      'contextMenus',
+      'declarativeNetRequestWithHostAccess',
+      'scripting',
+      'storage',
+    ],
+    host_permissions: ['https://bitbucket.org/*'],
     commands: {
       'reset-review': {
         suggested_key: { default: 'Alt+Shift+R' },

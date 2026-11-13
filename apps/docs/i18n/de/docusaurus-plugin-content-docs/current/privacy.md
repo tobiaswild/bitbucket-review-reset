@@ -46,6 +46,12 @@ gespeichert, bleiben also auf diesem Gerät und werden nicht synchronisiert. Auf
 Einstellungsseite der Erweiterung siehst du, wie viele gespeichert sind, und kannst sie jederzeit
 mit **Leeren** löschen.
 
+Solange die automatische Weiterleitung aktiviert ist, wird jeder gemerkte Name außerdem als
+Weiterleitungsregel an den Browser übergeben, damit spätere UUID-Links direkt die reguläre
+Adresse öffnen. Öffnest du einen Pull Request unter einem gemerkten Namen, fragt die Erweiterung
+die API von Bitbucket auf dieselbe Weise wie oben, ob es noch dasselbe Repository ist. Wurde es
+umbenannt oder entfernt, werden der Eintrag und seine Regel gelöscht und der Link neu aufgelöst.
+
 ### Deine Einstellungen
 
 Gespeichert werden fünf Einstellungen: ob UUID-Links automatisch weitergeleitet werden, ob die
@@ -60,7 +66,9 @@ zwischen deinen eigenen Geräten. Sie enthalten keine personenbezogenen Daten.
 | Berechtigung | Wofür sie gebraucht wird |
 | --- | --- |
 | `activeTab` | Die Adresse des aktuellen Tabs lesen, sobald du auf das Symbol in der Leiste klickst, das Tastenkürzel drückst oder den Eintrag im Kontextmenü wählst, damit die Erweiterung weiß, welchen Pull Request du ansiehst. |
+| `alarms` | Weiterleitungsregeln für gemerkte Namen entfernen, sobald diese älter als 14 Tage sind. |
 | `contextMenus` | **Review-Status dieses Pull Requests zurücksetzen** (und direkt nach einem Zurücksetzen **Letztes Zurücksetzen dieses Pull Requests rückgängig machen**) zum Kontextmenü der Seite auf Pull Requests hinzufügen. |
+| `declarativeNetRequestWithHostAccess` | Den Browser UUID-Links für gemerkte Repositories weiterleiten lassen, bevor die Seite lädt. Gilt nur für `bitbucket.org`. |
 | `scripting` | Eine kurze Funktion im Bitbucket-Tab ausführen, um die Einträge zum Review-Status aufzulisten und zu löschen. |
 | `storage` | Die oben beschriebenen Einstellungen und gemerkten Repository-Namen speichern und, für 10 Minuten, die Einträge deines letzten Zurücksetzens. |
 | `https://bitbucket.org/*` | Damit die Erweiterung auf Pull-Request-Seiten von Bitbucket funktioniert: dort den Zurücksetzen-Button und die Zahl der angesehenen Dateien anzeigen und UUID-Links umschreiben. |
