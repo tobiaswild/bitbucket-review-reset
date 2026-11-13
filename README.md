@@ -12,7 +12,7 @@ current tab.
 ## Install
 
 - **Chrome:** [Chrome Web Store](https://chromewebstore.google.com/detail/jebhmbfjipcmfkojdjbfjdcnlfnmljim)
-- **Firefox:** [Firefox Add-ons](https://addons.mozilla.org/firefox/addon/bitbucket-review-reset/)
+- **Firefox:** [Firefox Add-ons](https://addons.mozilla.org/firefox/addon/bitbucket-review-reset/) (Firefox 140 or later)
 - **Manual:** download the zip for your browser from the
   [latest release](https://github.com/tobiaswild/bitbucket-review-reset/releases/latest)
 
