@@ -2,6 +2,11 @@ extName: Bitbucket Review Reset
 extDescription: Setzt lokal gespeicherten PR-Review-Fortschritt auf Bitbucket Cloud zurück.
 optionsTitle: Bitbucket Review Reset – Einstellungen
 loading: Lädt…
+commandReset: Review-Status des aktuellen Pull Requests zurücksetzen
+commandUndo: Letztes Zurücksetzen des aktuellen Pull Requests rückgängig machen
+contextMenu:
+  reset: Review-Status dieses Pull Requests zurücksetzen
+  undo: Letztes Zurücksetzen dieses Pull Requests rückgängig machen
 popup:
   notPr: Öffne einen Bitbucket Pull Request, um dessen Review-Status zurückzusetzen.
   cleared:
@@ -53,6 +58,12 @@ options:
   autoRedirectHelp: Pull-Request-Links mit $1-Segmenten werden auf Workspace/Repo umgeleitet, wo dein Review-Fortschritt gespeichert ist.
   reloadAfterReset: Seite nach dem Zurücksetzen neu laden
   reloadAfterResetHelp: Ausschalten, um z.B. einen noch nicht abgeschickten Kommentar erst fertigzustellen. Bitbucket zeigt den zurückgesetzten Stand nach dem nächsten Neuladen.
+  shortcuts: "Tastenkürzel auf einem Pull Request:"
+  shortcutReset: Review-Status zurücksetzen
+  shortcutUndo: Letztes Zurücksetzen rückgängig machen (bis 10 Minuten danach)
+  shortcutNone: nicht belegt
+  shortcutHelp: Das Zurücksetzen steht auch im Kontextmenü der Seite eines Pull Requests.
+  shortcutChange: Kürzel ändern
   language: Sprache
   languageAuto: Automatisch (Browsersprache)
   heading: Einstellungen

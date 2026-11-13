@@ -8,6 +8,7 @@ import {
   t,
 } from '@/utils/i18n';
 import { autoRedirectUuid, reloadAfterReset } from '@/utils/settings';
+import { Shortcut } from './Shortcut';
 
 const REPO_URL = 'https://github.com/tobiaswild/bitbucket-review-reset';
 const PRIVACY_URL =
@@ -86,6 +87,7 @@ function App() {
           </small>
         </span>
       </label>
+      <Shortcut />
       <label className="mt-3 flex items-center gap-2">
         <span>{t('options.language')}</span>
         <select

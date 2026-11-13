@@ -1,0 +1,50 @@
+import {
+  createMenus,
+  RESET_MENU_ID,
+  syncUndoMenu,
+  UNDO_MENU_ID,
+} from '@/utils/contextMenu';
+import { resetTab, undoTab } from '@/utils/reset';
+import { watchBackup } from '@/utils/undo';
+
+type TabAction = (tab?: Browser.tabs.Tab) => Promise<void>;
+
+const ACTIONS: Record<string, TabAction> = {
+  [RESET_MENU_ID]: resetTab,
+  [UNDO_MENU_ID]: undoTab,
+};
+
+function syncMenu() {
+  syncUndoMenu().catch((error) => {
+    console.error('[bitbucket-review-reset] menu update failed', error);
+  });
+}
+
+export default defineBackground(() => {
+  // Firefox drops menus on browser restart and Chrome keeps them, so start from scratch every time
+  // the background starts. That also picks up the undo state again.
+  browser.contextMenus
+    .removeAll()
+    .then(() => {
+      createMenus();
+      syncMenu();
+    })
+    .catch((error) => {
+      console.error('[bitbucket-review-reset] menu setup failed', error);
+    });
+  watchBackup(syncMenu);
+
+  browser.contextMenus.onClicked.addListener((info, tab) => {
+    ACTIONS[String(info.menuItemId)]?.(tab);
+  });
+
+  // Command names match the menu ids.
+  browser.commands.onCommand.addListener(async (command, tab) => {
+    const run = ACTIONS[command];
+    if (!run) return;
+    const [active] = tab
+      ? [tab]
+      : await browser.tabs.query({ active: true, currentWindow: true });
+    await run(active);
+  });
+});
