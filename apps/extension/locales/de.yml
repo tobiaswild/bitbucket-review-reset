@@ -12,6 +12,13 @@ popup:
   redirectAutomatically: Diese automatisch weiterleiten…
   noState: Für diesen PR ist kein Review-Status gespeichert.
   reset: Review-Status zurücksetzen
+  filesViewed:
+    1: Datei als angesehen markiert
+    n: Dateien als angesehen markiert
+  lastCommit: Zuletzt geprüft
+  expires: Läuft ab
+  expired: Abgelaufen
+  storedKeys: Gespeicherte Keys ($1)
 errors:
   noRepoName: Bitbucket hat den Repository-Namen nicht zurückgegeben.
   noScriptResult: Das Skript konnte in diesem Tab nicht ausgeführt werden.
