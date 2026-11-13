@@ -1,3 +1,4 @@
+import { flashBadge } from '@/utils/badge';
 import type { DidResetMessage, DidResetResponse } from '@/utils/messages';
 import {
   clearReviewKeys,
@@ -19,17 +20,6 @@ export async function clearWithBackup(
   const entries = await runInTab(tabId, clearReviewKeys, [ref, only]);
   await saveBackup(ref, entries);
   return entries;
-}
-
-// MV2 (Firefox) only has browserAction.
-const action = browser.action ?? browser.browserAction;
-
-/** Briefly marks the toolbar icon on the tab, as feedback when the page isn't reloaded. */
-async function flashBadge(tabId: number, text: string) {
-  await action.setBadgeText({ tabId, text });
-  setTimeout(() => {
-    action.setBadgeText({ tabId, text: '' }).catch(() => {});
-  }, 3000);
 }
 
 /** Resets the PR open in `tab` without the popup; does nothing on other pages. */

@@ -10,6 +10,7 @@ import {
 import {
   autoRedirectUuid,
   reloadAfterReset,
+  showBadge,
   showPageButton,
 } from '@/utils/settings';
 import { Shortcut } from './Shortcut';
@@ -27,6 +28,7 @@ function App() {
   const [enabled, setEnabled] = useState<boolean | null>(null);
   const [reload, setReload] = useState<boolean | null>(null);
   const [pageButton, setPageButton] = useState<boolean | null>(null);
+  const [badge, setBadge] = useState<boolean | null>(null);
   const [selectedLanguage, setSelectedLanguage] = useState<Language | null>(
     null,
   );
@@ -35,6 +37,7 @@ function App() {
     autoRedirectUuid.getValue().then(setEnabled);
     reloadAfterReset.getValue().then(setReload);
     showPageButton.getValue().then(setPageButton);
+    showBadge.getValue().then(setBadge);
     language.getValue().then(setSelectedLanguage);
   }, []);
 
@@ -57,6 +60,11 @@ function App() {
     await showPageButton.setValue(value);
   }
 
+  async function toggleBadge(value: boolean) {
+    setBadge(value);
+    await showBadge.setValue(value);
+  }
+
   async function changeLanguage(value: Language) {
     await language.setValue(value);
     await initI18n();
@@ -67,6 +75,7 @@ function App() {
     enabled === null ||
     reload === null ||
     pageButton === null ||
+    badge === null ||
     selectedLanguage === null
   ) {
     return <p className="text-muted">{t('loading')}</p>;
@@ -114,6 +123,20 @@ function App() {
           {t('options.showPageButton')}
           <small className="block text-muted">
             {t('options.showPageButtonHelp')}
+          </small>
+        </span>
+      </label>
+      <label className="mt-3 flex cursor-pointer items-start gap-2">
+        <input
+          type="checkbox"
+          className="mt-0.5"
+          checked={badge}
+          onChange={(event) => toggleBadge(event.target.checked)}
+        />
+        <span>
+          {t('options.showBadge')}
+          <small className="block text-muted">
+            {t('options.showBadgeHelp')}
           </small>
         </span>
       </label>

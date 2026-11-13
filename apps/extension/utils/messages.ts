@@ -24,3 +24,21 @@ export function isDidResetMessage(
     Object.values(entries).every((value) => typeof value === 'string')
   );
 }
+
+/** Sent by the badge content script whenever the PR's viewed file count changes. */
+export interface ReviewStateMessage {
+  type: 'review-state';
+  /** Viewed files of the PR on the page, `null` off pull requests or when turned off. */
+  count: number | null;
+}
+
+export function isReviewStateMessage(
+  message: unknown,
+): message is ReviewStateMessage {
+  if (typeof message !== 'object' || message === null) return false;
+  const { type, count } = message as Record<string, unknown>;
+  return (
+    type === 'review-state' &&
+    (count === null || (Number.isInteger(count) && (count as number) >= 0))
+  );
+}

@@ -1,10 +1,11 @@
+import { forgetTab, initBadgeStyle, setReviewBadge } from '@/utils/badge';
 import {
   createMenus,
   RESET_MENU_ID,
   syncUndoMenu,
   UNDO_MENU_ID,
 } from '@/utils/contextMenu';
-import { isDidResetMessage } from '@/utils/messages';
+import { isDidResetMessage, isReviewStateMessage } from '@/utils/messages';
 import { afterPageReset, resetTab, undoTab } from '@/utils/reset';
 import { watchBackup } from '@/utils/undo';
 
@@ -22,6 +23,9 @@ function syncMenu() {
 }
 
 export default defineBackground(() => {
+  initBadgeStyle().catch(() => {});
+  browser.tabs.onRemoved.addListener(forgetTab);
+
   // Firefox drops menus on browser restart and Chrome keeps them, so start from scratch every time
   // the background starts. That also picks up the undo state again.
   browser.contextMenus
@@ -42,6 +46,10 @@ export default defineBackground(() => {
   browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
     const tab = sender.tab;
     if (sender.id !== browser.runtime.id || !tab?.id) return;
+    if (isReviewStateMessage(message)) {
+      setReviewBadge(tab.id, message.count).catch(() => {});
+      return;
+    }
     if (!isDidResetMessage(message)) return;
     afterPageReset(tab, message).then(
       (response) => {

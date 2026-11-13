@@ -22,6 +22,10 @@ und wann dieser Eintrag abläuft. Wenn du den Review-Status zurücksetzt, über 
 Tastenkürzel, das Kontextmenü der Seite oder den Button auf der Seite, löscht sie diese Einträge oder nur die Teile bzw.
 Dateien, die du ausgewählt hast.
 
+Solange ein Pull Request geöffnet ist, zählt die Erweiterung außerdem die als angesehen
+markierten Dateien, alle zwei Sekunden, solange der Tab sichtbar ist, und zeigt diese Zahl am
+Symbol in der Leiste an. Nur die Zahl wird von der Seite an die Erweiterung übergeben.
+
 Damit du ein Zurücksetzen rückgängig machen kannst, werden die gelöschten Einträge 10 Minuten
 lang im Sitzungsspeicher der Erweiterung (`storage.session`) aufbewahrt. Er bleibt auf deinem
 Gerät, wird nie synchronisiert und beim Schließen des Browsers geleert. Nichts verlässt deinen
@@ -37,9 +41,10 @@ an `bitbucket.org` und nirgendwo sonst.
 
 ### Deine Einstellungen
 
-Gespeichert werden vier Einstellungen: ob UUID-Links automatisch weitergeleitet werden, ob die
+Gespeichert werden fünf Einstellungen: ob UUID-Links automatisch weitergeleitet werden, ob die
 Seite nach dem Zurücksetzen neu geladen wird, ob der Zurücksetzen-Button auf Pull-Request-Seiten
-erscheint, und die Sprache der Oberfläche. Sie werden über
+erscheint, ob das Symbol in der Leiste die Zahl der angesehenen Dateien zeigt, und die Sprache
+der Oberfläche. Sie werden über
 die `storage.sync`-API des Browsers gespeichert. Wenn du die Browser-Synchronisierung aktiviert hast, überträgt dein Browser sie über dein Browser-Konto
 zwischen deinen eigenen Geräten. Sie enthalten keine personenbezogenen Daten.
 
@@ -51,7 +56,7 @@ zwischen deinen eigenen Geräten. Sie enthalten keine personenbezogenen Daten.
 | `contextMenus` | **Review-Status dieses Pull Requests zurücksetzen** (und direkt nach einem Zurücksetzen **Letztes Zurücksetzen dieses Pull Requests rückgängig machen**) zum Kontextmenü der Seite auf Pull Requests hinzufügen. |
 | `scripting` | Eine kurze Funktion im Bitbucket-Tab ausführen, um die Einträge zum Review-Status aufzulisten und zu löschen. |
 | `storage` | Die oben beschriebenen Einstellungen speichern und, für 10 Minuten, die Einträge deines letzten Zurücksetzens. |
-| `https://bitbucket.org/*` | Damit die Erweiterung auf Pull-Request-Seiten von Bitbucket funktioniert: dort den Zurücksetzen-Button anzeigen und UUID-Links umschreiben. |
+| `https://bitbucket.org/*` | Damit die Erweiterung auf Pull-Request-Seiten von Bitbucket funktioniert: dort den Zurücksetzen-Button und die Zahl der angesehenen Dateien anzeigen und UUID-Links umschreiben. |
 
 ## Weitergabe von Daten
 

@@ -17,3 +17,8 @@ export const showPageButton = storage.defineItem<boolean>(
   'sync:showPageButton',
   { fallback: true },
 );
+
+/** Show the number of viewed files on the toolbar icon. */
+export const showBadge = storage.defineItem<boolean>('sync:showBadge', {
+  fallback: true,
+});
