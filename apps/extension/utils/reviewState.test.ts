@@ -8,6 +8,8 @@ import {
   listReviewKeys,
   parsePrFromUrl,
   restoreReviewKeys,
+  reviewKeyGroup,
+  unmarkReviewedFiles,
   withSlugs,
 } from './reviewState';
 
@@ -85,12 +87,13 @@ describe('describeReviewEntry', () => {
     '__storejs_expire_mixin_last-reviewed-commit:check24/mfso-mono/1644';
 
   it.each([
-    ['{"a.ts":true,"b.ts":true,"c.ts":false}', 2],
-    ['{"a.ts":{"commit":"abc"},"b.ts":null}', 1],
-    ['["a.ts","b.ts","c.ts"]', 3],
-    ['{}', 0],
-  ])('counts viewed files in %s', (value, count) => {
-    expect(describeReviewEntry(files, value)).toEqual({ kind: 'files', count });
+    ['{"src/b.ts":"d97a457","src/a.ts":"a547bf3"}', ['src/a.ts', 'src/b.ts']],
+    ['{"a.ts":true,"b.ts":true,"c.ts":false}', ['a.ts', 'b.ts']],
+    ['{"a.ts":{"commit":"abc"},"b.ts":null}', ['a.ts']],
+    ['["b.ts","a.ts"]', ['a.ts', 'b.ts']],
+    ['{}', []],
+  ])('lists viewed files in %s', (value, paths) => {
+    expect(describeReviewEntry(files, value)).toEqual({ kind: 'files', paths });
   });
 
   it.each([
@@ -124,6 +127,17 @@ describe('describeReviewEntry', () => {
     ['theme', 'dark'],
   ])('falls back to unknown for %s = %s', (key, value) => {
     expect(describeReviewEntry(key, value)).toEqual({ kind: 'unknown' });
+  });
+});
+
+describe('reviewKeyGroup', () => {
+  it.each([
+    ['ws/repo/1:files-reviewed-state', 'files'],
+    ['last-reviewed-commit:ws/repo/1', 'commit'],
+    ['__storejs_expire_mixin_last-reviewed-commit:ws/repo/1', 'commit'],
+    ['something-new:ws/repo/1', 'other'],
+  ])('puts %s into %s', (key, group) => {
+    expect(reviewKeyGroup(key)).toBe(group);
   });
 });
 
@@ -180,6 +194,41 @@ describe('page scripts', () => {
       'check24/mfso-mono/16440:files-reviewed-state',
       'theme',
     ]);
+  });
+
+  it('clears only the listed keys', () => {
+    const storage = seed();
+    expect(
+      clearReviewKeys('check24/mfso-mono/1644', [
+        'check24/mfso-mono/1644:files-reviewed-state',
+        'theme',
+      ]),
+    ).toEqual({
+      'check24/mfso-mono/1644:files-reviewed-state': '{"a.ts":true}',
+    });
+    expect(storage.getItem('theme')).toBe('dark');
+    expect(storage.getItem('last-reviewed-commit:check24/mfso-mono/1644')).toBe(
+      'abc123',
+    );
+  });
+
+  it('unmarks single files and returns the previous value', () => {
+    const storage = seed();
+    const key = 'check24/mfso-mono/1644:files-reviewed-state';
+    storage.setItem(key, '{"a.ts":"a547bf3","b.ts":"d97a457"}');
+    expect(unmarkReviewedFiles('check24/mfso-mono/1644', ['a.ts'])).toEqual({
+      [key]: '{"a.ts":"a547bf3","b.ts":"d97a457"}',
+    });
+    expect(storage.getItem(key)).toBe('{"b.ts":"d97a457"}');
+  });
+
+  it('leaves the files untouched when nothing matches', () => {
+    const storage = seed();
+    expect(unmarkReviewedFiles('check24/mfso-mono/1644', ['x.ts'])).toEqual({});
+    expect(unmarkReviewedFiles('check24/mfso-mono/9', ['a.ts'])).toEqual({});
+    expect(storage.getItem('check24/mfso-mono/1644:files-reviewed-state')).toBe(
+      '{"a.ts":true}',
+    );
   });
 
   it('restores cleared keys', () => {

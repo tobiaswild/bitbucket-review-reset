@@ -23,6 +23,9 @@ listed keys and hit **Reset review state**. The page reloads afterwards,
 unless you turn that off in the settings. For 10 minutes after a reset the
 popup offers to undo it.
 
+To reset only part of it, untick the viewed files or the last reviewed commit
+before resetting, or open **Show files** and mark single files as not viewed.
+
 Bitbucket keeps the review progress in `localStorage` under three keys per PR:
 
 - `{workspace}/{repo}/{id}:files-reviewed-state`

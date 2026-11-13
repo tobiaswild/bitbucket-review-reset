@@ -8,6 +8,7 @@ import {
   type PullRequest,
   parsePrFromUrl,
   restoreReviewKeys,
+  unmarkReviewedFiles,
   withSlugs,
 } from '@/utils/reviewState';
 import { reloadAfterReset } from '@/utils/settings';
@@ -90,9 +91,9 @@ function App() {
     }
   }
 
-  async function reset(tabId: number, ref: string) {
+  async function reset(tabId: number, ref: string, only: string[] | null) {
     try {
-      const entries = await runInTab(tabId, clearReviewKeys, [ref]);
+      const entries = await runInTab(tabId, clearReviewKeys, [ref, only]);
       await saveBackup(ref, entries);
       await finish({
         status: 'cleared',
@@ -100,6 +101,23 @@ function App() {
         ref,
         entries,
         count: Object.keys(entries).length,
+        reloaded: await reloadAfterReset.getValue(),
+      });
+    } catch (error) {
+      setState({ status: 'error', message: String(error) });
+    }
+  }
+
+  async function unmarkFiles(tabId: number, ref: string, paths: string[]) {
+    try {
+      const entries = await runInTab(tabId, unmarkReviewedFiles, [ref, paths]);
+      await saveBackup(ref, entries);
+      await finish({
+        status: 'unmarked',
+        tabId,
+        ref,
+        entries,
+        count: Object.keys(entries).length > 0 ? paths.length : 0,
         reloaded: await reloadAfterReset.getValue(),
       });
     } catch (error) {
@@ -130,6 +148,7 @@ function App() {
     case 'error':
       return <p className="wrap-break-word text-danger">{state.message}</p>;
     case 'cleared':
+    case 'unmarked':
     case 'restored':
       return <DoneView state={state} onUndo={undo} />;
     case 'uuid-url':
@@ -144,7 +163,10 @@ function App() {
       return (
         <ReadyView
           state={state}
-          onReset={() => reset(state.tabId, state.pr.ref)}
+          onReset={(only) => reset(state.tabId, state.pr.ref, only)}
+          onUnmarkFiles={(paths) =>
+            unmarkFiles(state.tabId, state.pr.ref, paths)
+          }
           onUndo={(backup) => undo(state.tabId, state.pr.ref, backup)}
         />
       );

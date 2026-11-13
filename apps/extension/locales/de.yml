@@ -26,6 +26,18 @@ popup:
   redirectAutomatically: Diese automatisch weiterleiten…
   noState: Für diesen PR ist kein Review-Status gespeichert.
   reset: Review-Status zurücksetzen
+  resetSelected: Auswahl zurücksetzen
+  showFiles: Dateien anzeigen
+  unmarkFiles:
+    1: $1 Datei als nicht angesehen markieren
+    n: $1 Dateien als nicht angesehen markieren
+  unmarked:
+    1: $1 Datei als nicht angesehen markiert. Seite wird neu geladen…
+    n: $1 Dateien als nicht angesehen markiert. Seite wird neu geladen…
+  unmarkedNoReload:
+    1: $1 Datei als nicht angesehen markiert. Lade die Seite neu, damit es wirkt.
+    n: $1 Dateien als nicht angesehen markiert. Lade die Seite neu, damit es wirkt.
+  otherEntries: Sonstige Einträge ($1)
   filesViewed:
     1: Datei als angesehen markiert
     n: Dateien als angesehen markiert

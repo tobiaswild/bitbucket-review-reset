@@ -26,6 +26,18 @@ popup:
   redirectAutomatically: Redirect these automatically…
   noState: No saved review state for this PR.
   reset: Reset review state
+  resetSelected: Reset selected
+  showFiles: Show files
+  unmarkFiles:
+    1: Mark $1 file as not viewed
+    n: Mark $1 files as not viewed
+  unmarked:
+    1: Marked $1 file as not viewed. Reloading…
+    n: Marked $1 files as not viewed. Reloading…
+  unmarkedNoReload:
+    1: Marked $1 file as not viewed. Reload the page to apply.
+    n: Marked $1 files as not viewed. Reload the page to apply.
+  otherEntries: Other entries ($1)
   filesViewed:
     1: file marked as viewed
     n: files marked as viewed

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { summarize } from './ReviewSummary';
+import { presentGroups, summarize } from './ReviewSummary';
 
 const files = 'ws/repo/1:files-reviewed-state';
 const commit = 'last-reviewed-commit:ws/repo/1';
@@ -17,7 +17,7 @@ describe('summarize', () => {
         key(expire, '1700000000000'),
       ]),
     ).toEqual({
-      files: 2,
+      files: ['a.ts', 'b.ts'],
       commit: hash,
       expiresAt: 1700000000000,
       hasUnknown: false,
@@ -32,5 +32,23 @@ describe('summarize', () => {
 
   it('returns nothing for no keys', () => {
     expect(summarize([])).toEqual({ hasUnknown: false });
+  });
+});
+
+describe('presentGroups', () => {
+  it('lists the groups in display order', () => {
+    expect(
+      presentGroups([
+        key('other:ws/repo/1', 'x'),
+        key(expire, '1'),
+        key(files, '{}'),
+      ]),
+    ).toEqual(['files', 'commit', 'other']);
+  });
+
+  it('counts commit and expiry as one group', () => {
+    expect(presentGroups([key(commit, '"a"'), key(expire, '1')])).toEqual([
+      'commit',
+    ]);
   });
 });
