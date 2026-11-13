@@ -5,7 +5,7 @@ title: Datenschutzerklärung
 
 # Datenschutzerklärung
 
-_Zuletzt aktualisiert: 24. Oktober 2026_
+_Zuletzt aktualisiert: 13. November 2026_
 
 Bitbucket Review Reset erhebt, speichert und überträgt keine personenbezogenen Daten. Es gibt
 keine Analyse, kein Tracking, keine Telemetrie und keinen Server dieses Projekts. Alles, was die
@@ -15,10 +15,17 @@ Erweiterung tut, passiert lokal in deinem Browser.
 
 ### Review-Status auf Pull-Request-Seiten
 
-Wenn du das Popup auf einem Pull Request in Bitbucket Cloud öffnest, listet die Erweiterung die
-`localStorage`-Einträge auf, die **Bitbucket selbst** für diesen Pull Request geschrieben hat,
-und löscht sie, wenn du **Review-Status zurücksetzen** drückst. Die Namen der Einträge und ihre
-Größe werden dir im Popup angezeigt. Nichts wird aus dem Tab herauskopiert.
+Wenn du das Popup auf einem Pull Request in Bitbucket Cloud öffnest, liest die Erweiterung die
+`localStorage`-Einträge, die **Bitbucket selbst** für diesen Pull Request geschrieben hat, und
+zeigt dir, was darin steht: die als angesehen markierten Dateien, den zuletzt geprüften Commit
+und wann dieser Eintrag abläuft. Wenn du den Review-Status zurücksetzt, über das Popup, das
+Tastenkürzel oder das Kontextmenü der Seite, löscht sie diese Einträge oder nur die Teile bzw.
+Dateien, die du ausgewählt hast.
+
+Damit du ein Zurücksetzen rückgängig machen kannst, werden die gelöschten Einträge 10 Minuten
+lang im Sitzungsspeicher der Erweiterung (`storage.session`) aufbewahrt. Er bleibt auf deinem
+Gerät, wird nie synchronisiert und beim Schließen des Browsers geleert. Nichts verlässt deinen
+Browser.
 
 ### Repository-Namen
 
@@ -30,18 +37,19 @@ an `bitbucket.org` und nirgendwo sonst.
 
 ### Deine Einstellungen
 
-Gespeichert werden zwei Einstellungen: ob UUID-Links automatisch weitergeleitet werden, und die
-Sprache der Oberfläche. Sie werden über die `storage.sync`-API des Browsers gespeichert. Wenn du
-die Browser-Synchronisierung aktiviert hast, überträgt dein Browser sie über dein Browser-Konto
+Gespeichert werden drei Einstellungen: ob UUID-Links automatisch weitergeleitet werden, ob die
+Seite nach dem Zurücksetzen neu geladen wird, und die Sprache der Oberfläche. Sie werden über
+die `storage.sync`-API des Browsers gespeichert. Wenn du die Browser-Synchronisierung aktiviert hast, überträgt dein Browser sie über dein Browser-Konto
 zwischen deinen eigenen Geräten. Sie enthalten keine personenbezogenen Daten.
 
 ## Berechtigungen
 
 | Berechtigung | Wofür sie gebraucht wird |
 | --- | --- |
-| `activeTab` | Die Adresse des aktuellen Tabs lesen, sobald du auf das Symbol in der Leiste klickst, damit die Erweiterung weiß, welchen Pull Request du ansiehst. |
+| `activeTab` | Die Adresse des aktuellen Tabs lesen, sobald du auf das Symbol in der Leiste klickst, das Tastenkürzel drückst oder den Eintrag im Kontextmenü wählst, damit die Erweiterung weiß, welchen Pull Request du ansiehst. |
+| `contextMenus` | **Review-Status dieses Pull Requests zurücksetzen** zum Kontextmenü der Seite auf Pull Requests hinzufügen. |
 | `scripting` | Eine kurze Funktion im Bitbucket-Tab ausführen, um die Einträge zum Review-Status aufzulisten und zu löschen. |
-| `storage` | Die beiden oben beschriebenen Einstellungen speichern. |
+| `storage` | Die oben beschriebenen Einstellungen speichern und, für 10 Minuten, die Einträge deines letzten Zurücksetzens. |
 | `https://bitbucket.org/*` | Damit die Erweiterung auf Pull-Request-Seiten von Bitbucket funktioniert und UUID-Links umschreiben kann. |
 
 ## Weitergabe von Daten

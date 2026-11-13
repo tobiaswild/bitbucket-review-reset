@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { t } from '@/utils/i18n';
+import { clearWithBackup } from '@/utils/reset';
 import {
-  clearReviewKeys,
   fetchRepoFullName,
   isUuidSegment,
   listReviewKeys,
@@ -12,6 +12,7 @@ import {
   withSlugs,
 } from '@/utils/reviewState';
 import { reloadAfterReset } from '@/utils/settings';
+import { runInTab } from '@/utils/tabs';
 import { clearBackup, type Entries, getBackup, saveBackup } from '@/utils/undo';
 import {
   type Done,
@@ -20,20 +21,6 @@ import {
   type State,
   UuidUrlView,
 } from './views';
-
-async function runInTab<A extends unknown[], R>(
-  tabId: number,
-  func: (...args: A) => R,
-  args: A,
-): Promise<R> {
-  const [injection] = await browser.scripting.executeScript({
-    target: { tabId },
-    func,
-    args,
-  });
-  if (!injection) throw new Error(t('errors.noScriptResult'));
-  return injection.result as R;
-}
 
 /** Reads the active tab and decides which view the popup starts with. */
 async function loadInitialState(): Promise<State> {
@@ -93,8 +80,7 @@ function App() {
 
   async function reset(tabId: number, ref: string, only: string[] | null) {
     try {
-      const entries = await runInTab(tabId, clearReviewKeys, [ref, only]);
-      await saveBackup(ref, entries);
+      const entries = await clearWithBackup(tabId, ref, only);
       await finish({
         status: 'cleared',
         tabId,

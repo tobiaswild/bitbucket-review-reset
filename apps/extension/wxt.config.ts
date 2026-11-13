@@ -11,7 +11,13 @@ export default defineConfig({
     default_locale: 'en',
     name: '__MSG_extName__',
     description: '__MSG_extDescription__',
-    permissions: ['activeTab', 'scripting', 'storage'],
+    permissions: ['activeTab', 'contextMenus', 'scripting', 'storage'],
+    commands: {
+      'reset-review': {
+        suggested_key: { default: 'Alt+Shift+R' },
+        description: '__MSG_commandReset__',
+      },
+    },
     ...(browser === 'firefox' && {
       browser_specific_settings: {
         gecko: {

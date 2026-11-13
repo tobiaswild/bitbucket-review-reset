@@ -2,6 +2,9 @@ extName: Bitbucket Review Reset
 extDescription: Reset locally stored PR review progress on Bitbucket Cloud.
 optionsTitle: Bitbucket Review Reset – Settings
 loading: Loading…
+commandReset: Reset the review state of the current pull request
+contextMenu:
+  reset: Reset review state of this pull request
 popup:
   notPr: Open a Bitbucket pull request to reset its review state.
   cleared:
@@ -53,6 +56,10 @@ options:
   autoRedirectHelp: Pull request links using $1 segments are redirected to workspace/repo, where your review progress is stored.
   reloadAfterReset: Reload the page after resetting
   reloadAfterResetHelp: Turn this off to finish e.g. an unsent comment first. Bitbucket shows the cleared state after the next reload.
+  shortcut: "Keyboard shortcut for resetting the open pull request:"
+  shortcutNone: not set
+  shortcutHelp: The page context menu on a pull request has the same action.
+  shortcutChange: Change shortcut
   language: Language
   languageAuto: Automatic (browser language)
   heading: Settings

@@ -5,7 +5,7 @@ title: Privacy Policy
 
 # Privacy Policy
 
-_Last updated: 24 October 2026_
+_Last updated: 13 November 2026_
 
 Bitbucket Review Reset does not collect, store or transmit any personal data. There is no
 analytics, no tracking, no telemetry, and no server run by this project. Everything the
@@ -15,10 +15,15 @@ extension does happens locally in your browser.
 
 ### Review state on pull request pages
 
-When you open the popup on a Bitbucket Cloud pull request, the extension lists the
-`localStorage` entries that **Bitbucket itself** wrote for that pull request, and deletes them
-when you press **Reset review state**. The entry names and their sizes are shown to you in the
-popup. Nothing is copied out of the tab.
+When you open the popup on a Bitbucket Cloud pull request, the extension reads the
+`localStorage` entries that **Bitbucket itself** wrote for that pull request and shows you what
+they contain: the files marked as viewed, the last reviewed commit and when that entry expires.
+When you reset the review state, from the popup, the keyboard shortcut or the page's context
+menu, it deletes these entries, or only the parts or files you selected.
+
+So that you can undo a reset, the deleted entries are kept for 10 minutes in the extension's
+session storage (`storage.session`). It stays on your device, is never synced, and is emptied
+when the browser closes. Nothing leaves your browser.
 
 ### Repository names
 
@@ -30,18 +35,19 @@ nowhere else.
 
 ### Your settings
 
-Two preferences are stored: whether UUID links are redirected automatically, and the interface
-language. They are saved with the browser's `storage.sync` API, so if you have browser sync
-switched on, your browser copies them between your own devices through your browser account.
+Three preferences are stored: whether UUID links are redirected automatically, whether the page
+reloads after a reset, and the interface language. They are saved with the browser's
+`storage.sync` API, so if you have browser sync switched on, your browser copies them between your own devices through your browser account.
 They contain no personal data.
 
 ## Permissions
 
 | Permission | Why it is needed |
 | --- | --- |
-| `activeTab` | Read the address of the current tab once you click the toolbar icon, so the extension knows which pull request you are looking at. |
+| `activeTab` | Read the address of the current tab once you click the toolbar icon, press the keyboard shortcut or use the context menu entry, so the extension knows which pull request you are looking at. |
+| `contextMenus` | Add **Reset review state of this pull request** to the page's context menu on pull requests. |
 | `scripting` | Run a short function inside the Bitbucket tab to list and clear the review-state entries. |
-| `storage` | Save the two settings described above. |
+| `storage` | Save the settings described above and, for 10 minutes, the entries of your last reset. |
 | `https://bitbucket.org/*` | Let the extension work on Bitbucket pull request pages and rewrite UUID links. |
 
 ## Data sharing
