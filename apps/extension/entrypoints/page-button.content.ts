@@ -9,6 +9,7 @@ import {
 import { showPageButton } from '@/utils/settings';
 
 const ARM_TIMEOUT_MS = 3000;
+const WATCHDOG_MS = 1000;
 const MESSAGE_TIMEOUT_MS = 4000;
 
 // Lives in a shadow root, so neither side's CSS leaks into the other.
@@ -38,6 +39,11 @@ type ButtonState = 'idle' | 'armed' | 'busy' | 'done' | 'error';
 
 function createButton(ctx: ContentScriptContext) {
   const host = document.createElement('bitbucket-review-reset');
+  // Page CSS can still reach the host element itself; inline !important wins over it.
+  host.setAttribute(
+    'style',
+    'display: block !important; visibility: visible !important; opacity: 1 !important;',
+  );
   const root = host.attachShadow({ mode: 'closed' });
   const style = document.createElement('style');
   style.textContent = STYLE;
@@ -104,19 +110,24 @@ export default defineContentScript({
   runAt: 'document_idle',
   async main(ctx) {
     let host: HTMLElement | null = null;
+    let wanted = false;
+
+    // Outside <body>, which Bitbucket's React app re-renders and may clear.
+    function mount() {
+      if (!host) host = createButton(ctx);
+      if (!host.isConnected) document.documentElement.append(host);
+    }
 
     // Bitbucket navigates between pages without reloading, so re-check on every URL change.
     async function update() {
       const pr = parsePrFromUrl(location.href);
-      const wanted =
+      wanted =
         pr !== null &&
         !isUuidSegment(pr.workspace) &&
         !isUuidSegment(pr.repo) &&
         (await showPageButton.getValue());
-      if (wanted && !host) {
-        host = createButton(ctx);
-        document.body.append(host);
-      } else if (!wanted && host) {
+      if (wanted) mount();
+      else if (host) {
         host.remove();
         host = null;
       }
@@ -124,6 +135,10 @@ export default defineContentScript({
 
     await update();
     ctx.addEventListener(window, 'wxt:locationchange', update);
+    // Puts the button back if the page removed it.
+    ctx.setInterval(() => {
+      if (wanted && !host?.isConnected) mount();
+    }, WATCHDOG_MS);
     const unwatch = showPageButton.watch(update);
     ctx.onInvalidated(() => {
       unwatch();
