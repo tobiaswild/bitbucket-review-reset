@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Report a security vulnerability
+    url: https://github.com/tobiaswild/bitbucket-review-reset/security/advisories/new
+    about: Please report security issues privately, not as a public issue.
+  - name: Documentation
+    url: https://tobiaswild.github.io/bitbucket-review-reset/
+    about: Read how the extension works.
