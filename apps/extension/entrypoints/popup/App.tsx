@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { t } from '@/utils/i18n';
 import {
   clearReviewKeys,
+  describeReviewEntry,
   fetchRepoFullName,
   isUuidSegment,
   listReviewKeys,
@@ -21,6 +22,32 @@ type State =
   | { status: 'ready'; tabId: number; pr: PullRequest; keys: StoredKey[] }
   | { status: 'cleared'; count: number }
   | { status: 'error'; message: string };
+
+function formatDate(at: number): string {
+  return new Date(at).toLocaleString(document.documentElement.lang || [], {
+    dateStyle: 'medium',
+    timeStyle: 'short',
+  });
+}
+
+/** Human-readable label for an entry, or `null` if its value isn't understood. */
+function describe({ key, value }: StoredKey): string | null {
+  const entry = describeReviewEntry(key, value);
+  switch (entry.kind) {
+    case 'files':
+      return t('popup.entry.files', entry.count);
+    case 'commit':
+      return t('popup.entry.commit', [entry.hash.slice(0, 12)]);
+    case 'expires': {
+      const date = formatDate(entry.at);
+      return entry.at < Date.now()
+        ? t('popup.entry.expired', [date])
+        : t('popup.entry.expires', [date]);
+    }
+    case 'unknown':
+      return null;
+  }
+}
 
 async function runInTab<A extends unknown[], R>(
   tabId: number,
@@ -132,18 +159,24 @@ function App() {
           ) : (
             <>
               <ul className="mb-3 grid list-none grid-cols-1 gap-1 p-0">
-                {keys.map(({ key, size }) => (
-                  <li
-                    key={key}
-                    title={key}
-                    className="flex justify-between gap-2 rounded bg-surface px-2 py-1.5"
-                  >
-                    <code className="min-w-0 truncate text-[11px]">{key}</code>
-                    <span className="shrink-0 text-[11px] text-muted">
-                      {size} B
-                    </span>
-                  </li>
-                ))}
+                {keys.map((stored) => {
+                  const label = describe(stored);
+                  return (
+                    <li
+                      key={stored.key}
+                      title={stored.key}
+                      className="rounded bg-surface px-2 py-1.5"
+                    >
+                      {label && <p className="m-0">{label}</p>}
+                      <div className="flex justify-between gap-2 text-[11px] text-muted">
+                        <code className="min-w-0 truncate">{stored.key}</code>
+                        {!label && (
+                          <span className="shrink-0">{stored.size} B</span>
+                        )}
+                      </div>
+                    </li>
+                  );
+                })}
               </ul>
               <button
                 type="button"

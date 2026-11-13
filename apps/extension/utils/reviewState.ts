@@ -9,6 +9,56 @@ export interface PullRequest {
 export interface StoredKey {
   key: string;
   size: number;
+  value: string;
+}
+
+/** What a stored entry means, as far as we can tell from its key and value. */
+export type ReviewEntry =
+  | { kind: 'files'; count: number }
+  | { kind: 'commit'; hash: string }
+  | { kind: 'expires'; at: number }
+  | { kind: 'unknown' };
+
+function parseJson(value: string): unknown {
+  try {
+    return JSON.parse(value);
+  } catch {
+    return undefined;
+  }
+}
+
+/**
+ * Interprets a review key's value. Bitbucket's format is undocumented (values are written by store.js,
+ * which JSON-encodes them), so anything unexpected yields `unknown` and the popup falls back to the raw key.
+ */
+export function describeReviewEntry(key: string, value: string): ReviewEntry {
+  const parsed = parseJson(value);
+
+  if (key.startsWith('__storejs_expire_mixin_')) {
+    const at = typeof parsed === 'number' ? parsed : Number.NaN;
+    if (!Number.isFinite(at) || at <= 0) return { kind: 'unknown' };
+    // store.js stores milliseconds; tolerate seconds just in case.
+    return { kind: 'expires', at: at < 1e11 ? at * 1000 : at };
+  }
+
+  if (key.startsWith('last-reviewed-commit:')) {
+    const hash = typeof parsed === 'string' ? parsed : value;
+    return /^[0-9a-f]{7,64}$/i.test(hash)
+      ? { kind: 'commit', hash }
+      : { kind: 'unknown' };
+  }
+
+  if (key.endsWith(':files-reviewed-state')) {
+    if (Array.isArray(parsed)) return { kind: 'files', count: parsed.length };
+    if (typeof parsed === 'object' && parsed !== null) {
+      const count = Object.values(parsed).filter(
+        (reviewed) => reviewed !== false && reviewed != null,
+      ).length;
+      return { kind: 'files', count };
+    }
+  }
+
+  return { kind: 'unknown' };
 }
 
 const PR_PATH = /^\/([^/]+)\/([^/]+)\/pull-requests\/(\d+)(?:\/|$)/;
@@ -62,7 +112,10 @@ export function listReviewKeys(ref: string): StoredKey[] {
   return Object.keys(localStorage)
     .filter((key) => pattern.test(key))
     .sort()
-    .map((key) => ({ key, size: localStorage.getItem(key)?.length ?? 0 }));
+    .map((key) => {
+      const value = localStorage.getItem(key) ?? '';
+      return { key, size: value.length, value };
+    });
 }
 
 export function clearReviewKeys(ref: string): number {

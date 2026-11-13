@@ -1,6 +1,7 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import {
   clearReviewKeys,
+  describeReviewEntry,
   fetchRepoFullName,
   isReviewKeyFor,
   isUuidSegment,
@@ -73,6 +74,55 @@ describe('isReviewKeyFor', () => {
     'unrelated-setting',
   ])('ignores %s', (key) => {
     expect(isReviewKeyFor(key, ref)).toBe(false);
+  });
+});
+
+describe('describeReviewEntry', () => {
+  const files = 'check24/mfso-mono/1644:files-reviewed-state';
+  const commit = 'last-reviewed-commit:check24/mfso-mono/1644';
+  const expire =
+    '__storejs_expire_mixin_last-reviewed-commit:check24/mfso-mono/1644';
+
+  it.each([
+    ['{"a.ts":true,"b.ts":true,"c.ts":false}', 2],
+    ['{"a.ts":{"commit":"abc"},"b.ts":null}', 1],
+    ['["a.ts","b.ts","c.ts"]', 3],
+    ['{}', 0],
+  ])('counts viewed files in %s', (value, count) => {
+    expect(describeReviewEntry(files, value)).toEqual({ kind: 'files', count });
+  });
+
+  it.each([
+    '"0123456789abcdef0123456789abcdef01234567"',
+    '0123456789abcdef0123456789abcdef01234567',
+  ])('reads the commit hash from %s', (value) => {
+    expect(describeReviewEntry(commit, value)).toEqual({
+      kind: 'commit',
+      hash: '0123456789abcdef0123456789abcdef01234567',
+    });
+  });
+
+  it('reads the expiry in milliseconds and seconds', () => {
+    expect(describeReviewEntry(expire, '1767225600000')).toEqual({
+      kind: 'expires',
+      at: 1767225600000,
+    });
+    expect(describeReviewEntry(expire, '1767225600')).toEqual({
+      kind: 'expires',
+      at: 1767225600000,
+    });
+  });
+
+  it.each([
+    [files, 'not json'],
+    [files, '"a.ts"'],
+    [commit, '"<script>"'],
+    [commit, '{"hash":"abc1234"}'],
+    [expire, '"soon"'],
+    [expire, '-1'],
+    ['theme', 'dark'],
+  ])('falls back to unknown for %s = %s', (key, value) => {
+    expect(describeReviewEntry(key, value)).toEqual({ kind: 'unknown' });
   });
 });
 
