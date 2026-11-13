@@ -42,7 +42,11 @@ export async function initI18n(): Promise<void> {
     `/_locales/${selected}/messages.json`,
     browser.runtime.getURL('/popup.html'),
   );
-  const messages: Messages = await (await fetch(url)).json();
+  const response = await fetch(url);
+  if (!response.ok) {
+    throw new Error(`Failed to load ${url.pathname}: ${response.status}`);
+  }
+  const messages: Messages = await response.json();
   translate = createTranslate(messages) as unknown as Translate;
   document.documentElement.lang = selected;
 }
