@@ -41,3 +41,18 @@ export async function getBackup(
 export async function clearBackup(): Promise<void> {
   await lastReset.removeValue();
 }
+
+/** The PR whose last reset can still be undone, and until when. */
+export async function getUndoable(
+  now = Date.now(),
+): Promise<{ ref: string; until: number } | null> {
+  const backup = await lastReset.getValue();
+  if (!backup) return null;
+  const until = backup.at + UNDO_WINDOW_MS;
+  return now > until ? null : { ref: backup.ref, until };
+}
+
+/** Calls `onChange` whenever a reset is saved or undone, from any part of the extension. */
+export function watchBackup(onChange: () => void): () => void {
+  return lastReset.watch(onChange);
+}

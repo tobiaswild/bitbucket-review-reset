@@ -25,8 +25,8 @@ popup offers to undo it.
 
 Without opening the popup, press <kbd>Alt</kbd>+<kbd>Shift</kbd>+<kbd>R</kbd> on a
 pull request or pick **Reset review state of this pull request** from the page's
-context menu. <kbd>Alt</kbd>+<kbd>Shift</kbd>+<kbd>U</kbd> undoes the last
-reset. The shortcuts can be changed in the browser's extension shortcut
+context menu. <kbd>Alt</kbd>+<kbd>Shift</kbd>+<kbd>U</kbd> or **Undo last reset of
+this pull request** in the context menu undoes the last reset. The shortcuts can be changed in the browser's extension shortcut
 settings.
 
 To reset only part of it, untick the viewed files or the last reviewed commit

@@ -45,7 +45,7 @@ They contain no personal data.
 | Permission | Why it is needed |
 | --- | --- |
 | `activeTab` | Read the address of the current tab once you click the toolbar icon, press the keyboard shortcut or use the context menu entry, so the extension knows which pull request you are looking at. |
-| `contextMenus` | Add **Reset review state of this pull request** to the page's context menu on pull requests. |
+| `contextMenus` | Add **Reset review state of this pull request** (and, right after a reset, **Undo last reset of this pull request**) to the page's context menu on pull requests. |
 | `scripting` | Run a short function inside the Bitbucket tab to list and clear the review-state entries. |
 | `storage` | Save the settings described above and, for 10 minutes, the entries of your last reset. |
 | `https://bitbucket.org/*` | Let the extension work on Bitbucket pull request pages and rewrite UUID links. |

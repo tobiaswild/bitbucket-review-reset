@@ -6,6 +6,7 @@ commandReset: Review-Status des aktuellen Pull Requests zurücksetzen
 commandUndo: Letztes Zurücksetzen des aktuellen Pull Requests rückgängig machen
 contextMenu:
   reset: Review-Status dieses Pull Requests zurücksetzen
+  undo: Letztes Zurücksetzen dieses Pull Requests rückgängig machen
 popup:
   notPr: Öffne einen Bitbucket Pull Request, um dessen Review-Status zurückzusetzen.
   cleared:

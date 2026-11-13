@@ -22,13 +22,32 @@ export function Shortcut() {
   );
 
   useEffect(() => {
-    browser.commands.getAll().then((commands) => {
+    async function load() {
+      const commands = await browser.commands.getAll();
       setShortcuts(
         Object.fromEntries(
           commands.map(({ name, shortcut }) => [name ?? '', shortcut ?? '']),
         ),
       );
-    });
+    }
+    // Shortcuts are changed on the browser's own settings page, so read them again when the user
+    // comes back here. Firefox also reports changes directly.
+    function onVisible() {
+      if (document.visibilityState === 'visible') load();
+    }
+    const commands = browser.commands as typeof browser.commands & {
+      onChanged?: Browser.events.Event<() => void>;
+    };
+
+    load();
+    document.addEventListener('visibilitychange', onVisible);
+    window.addEventListener('focus', load);
+    commands.onChanged?.addListener(load);
+    return () => {
+      document.removeEventListener('visibilitychange', onVisible);
+      window.removeEventListener('focus', load);
+      commands.onChanged?.removeListener(load);
+    };
   }, []);
 
   if (shortcuts === null) return null;

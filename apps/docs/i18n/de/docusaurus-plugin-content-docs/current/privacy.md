@@ -47,7 +47,7 @@ zwischen deinen eigenen Geräten. Sie enthalten keine personenbezogenen Daten.
 | Berechtigung | Wofür sie gebraucht wird |
 | --- | --- |
 | `activeTab` | Die Adresse des aktuellen Tabs lesen, sobald du auf das Symbol in der Leiste klickst, das Tastenkürzel drückst oder den Eintrag im Kontextmenü wählst, damit die Erweiterung weiß, welchen Pull Request du ansiehst. |
-| `contextMenus` | **Review-Status dieses Pull Requests zurücksetzen** zum Kontextmenü der Seite auf Pull Requests hinzufügen. |
+| `contextMenus` | **Review-Status dieses Pull Requests zurücksetzen** (und direkt nach einem Zurücksetzen **Letztes Zurücksetzen dieses Pull Requests rückgängig machen**) zum Kontextmenü der Seite auf Pull Requests hinzufügen. |
 | `scripting` | Eine kurze Funktion im Bitbucket-Tab ausführen, um die Einträge zum Review-Status aufzulisten und zu löschen. |
 | `storage` | Die oben beschriebenen Einstellungen speichern und, für 10 Minuten, die Einträge deines letzten Zurücksetzens. |
 | `https://bitbucket.org/*` | Damit die Erweiterung auf Pull-Request-Seiten von Bitbucket funktioniert und UUID-Links umschreiben kann. |

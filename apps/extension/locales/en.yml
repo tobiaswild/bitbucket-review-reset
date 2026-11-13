@@ -6,6 +6,7 @@ commandReset: Reset the review state of the current pull request
 commandUndo: Undo the last reset of the current pull request
 contextMenu:
   reset: Reset review state of this pull request
+  undo: Undo last reset of this pull request
 popup:
   notPr: Open a Bitbucket pull request to reset its review state.
   cleared:
