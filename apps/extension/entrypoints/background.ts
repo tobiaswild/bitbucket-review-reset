@@ -4,7 +4,8 @@ import {
   syncUndoMenu,
   UNDO_MENU_ID,
 } from '@/utils/contextMenu';
-import { resetTab, undoTab } from '@/utils/reset';
+import { isDidResetMessage } from '@/utils/messages';
+import { afterPageReset, resetTab, undoTab } from '@/utils/reset';
 import { watchBackup } from '@/utils/undo';
 
 type TabAction = (tab?: Browser.tabs.Tab) => Promise<void>;
@@ -36,6 +37,23 @@ export default defineBackground(() => {
 
   browser.contextMenus.onClicked.addListener((info, tab) => {
     ACTIONS[String(info.menuItemId)]?.(tab);
+  });
+
+  browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
+    const tab = sender.tab;
+    if (sender.id !== browser.runtime.id || !tab?.id) return;
+    if (!isDidResetMessage(message)) return;
+    afterPageReset(tab, message).then(
+      (response) => {
+        sendResponse(response);
+        if (response.reloaded && tab.id) browser.tabs.reload(tab.id);
+      },
+      (error) => {
+        console.error('[bitbucket-review-reset] page reset failed', error);
+        sendResponse({ reloaded: false });
+      },
+    );
+    return true; // keeps sendResponse alive for the async reply
   });
 
   // Command names match the menu ids.

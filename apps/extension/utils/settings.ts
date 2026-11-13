@@ -11,3 +11,9 @@ export const reloadAfterReset = storage.defineItem<boolean>(
   'sync:reloadAfterReset',
   { fallback: true },
 );
+
+/** Show a reset button on Bitbucket pull request pages. */
+export const showPageButton = storage.defineItem<boolean>(
+  'sync:showPageButton',
+  { fallback: true },
+);

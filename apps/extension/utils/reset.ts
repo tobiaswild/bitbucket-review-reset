@@ -1,5 +1,7 @@
+import type { DidResetMessage, DidResetResponse } from '@/utils/messages';
 import {
   clearReviewKeys,
+  isReviewKeyFor,
   isUuidSegment,
   parsePrFromUrl,
   restoreReviewKeys,
@@ -67,4 +69,21 @@ export async function undoTab(tab: Browser.tabs.Tab | undefined) {
     console.error('[bitbucket-review-reset] undo failed', error);
     await flashBadge(tab.id, '!');
   }
+}
+
+/**
+ * Finishes a reset the page button did in `tab`: keeps the entries for undo and reports whether the
+ * caller should expect a reload. Only accepts entries of the PR the tab actually shows.
+ */
+export async function afterPageReset(
+  tab: Browser.tabs.Tab,
+  { ref, entries }: DidResetMessage,
+): Promise<DidResetResponse> {
+  const pr = tab.url ? parsePrFromUrl(tab.url) : null;
+  if (!pr || pr.ref !== ref) return { reloaded: false };
+  const own = Object.fromEntries(
+    Object.entries(entries).filter(([key]) => isReviewKeyFor(key, ref)),
+  );
+  await saveBackup(ref, own);
+  return { reloaded: await reloadAfterReset.getValue() };
 }

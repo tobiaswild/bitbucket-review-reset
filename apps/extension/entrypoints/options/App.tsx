@@ -7,7 +7,11 @@ import {
   language,
   t,
 } from '@/utils/i18n';
-import { autoRedirectUuid, reloadAfterReset } from '@/utils/settings';
+import {
+  autoRedirectUuid,
+  reloadAfterReset,
+  showPageButton,
+} from '@/utils/settings';
 import { Shortcut } from './Shortcut';
 
 const REPO_URL = 'https://github.com/tobiaswild/bitbucket-review-reset';
@@ -22,6 +26,7 @@ const LINKS = [
 function App() {
   const [enabled, setEnabled] = useState<boolean | null>(null);
   const [reload, setReload] = useState<boolean | null>(null);
+  const [pageButton, setPageButton] = useState<boolean | null>(null);
   const [selectedLanguage, setSelectedLanguage] = useState<Language | null>(
     null,
   );
@@ -29,6 +34,7 @@ function App() {
   useEffect(() => {
     autoRedirectUuid.getValue().then(setEnabled);
     reloadAfterReset.getValue().then(setReload);
+    showPageButton.getValue().then(setPageButton);
     language.getValue().then(setSelectedLanguage);
   }, []);
 
@@ -46,13 +52,23 @@ function App() {
     await reloadAfterReset.setValue(value);
   }
 
+  async function togglePageButton(value: boolean) {
+    setPageButton(value);
+    await showPageButton.setValue(value);
+  }
+
   async function changeLanguage(value: Language) {
     await language.setValue(value);
     await initI18n();
     setSelectedLanguage(value);
   }
 
-  if (enabled === null || reload === null || selectedLanguage === null) {
+  if (
+    enabled === null ||
+    reload === null ||
+    pageButton === null ||
+    selectedLanguage === null
+  ) {
     return <p className="text-muted">{t('loading')}</p>;
   }
 
@@ -84,6 +100,20 @@ function App() {
           {t('options.reloadAfterReset')}
           <small className="block text-muted">
             {t('options.reloadAfterResetHelp')}
+          </small>
+        </span>
+      </label>
+      <label className="mt-3 flex cursor-pointer items-start gap-2">
+        <input
+          type="checkbox"
+          className="mt-0.5"
+          checked={pageButton}
+          onChange={(event) => togglePageButton(event.target.checked)}
+        />
+        <span>
+          {t('options.showPageButton')}
+          <small className="block text-muted">
+            {t('options.showPageButtonHelp')}
           </small>
         </span>
       </label>
