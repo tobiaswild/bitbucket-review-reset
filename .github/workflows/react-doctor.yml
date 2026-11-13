@@ -1,0 +1,33 @@
+name: React Doctor
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+  push:
+    branches: [main]
+
+permissions: {}
+
+concurrency:
+  group: react-doctor-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  react-doctor:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write # inline review comments
+      issues: write # sticky summary comment
+      statuses: write # commit status with the score
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          # Full history so PR scans can find the merge base and report only new issues.
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: millionco/react-doctor@695e46eee203a5d1855020191aa7e9c010a1250e # v2.4.0
+        with:
+          # Advisory for now; switch to "error" or "warning" to fail PRs.
+          blocking: none
+          version: "0.9.22"
