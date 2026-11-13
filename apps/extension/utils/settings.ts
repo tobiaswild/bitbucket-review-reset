@@ -5,3 +5,9 @@ export const autoRedirectUuid = storage.defineItem<boolean>(
   'sync:autoRedirectUuid',
   { fallback: false },
 );
+
+/** Reload the tab after resetting so Bitbucket picks up the cleared state. */
+export const reloadAfterReset = storage.defineItem<boolean>(
+  'sync:reloadAfterReset',
+  { fallback: true },
+);

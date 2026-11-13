@@ -17,4 +17,4 @@ Bitbucket speichert diese Daten im `localStorage` unter drei Schlüsseln pro PR:
 
 ## Verwendung
 
-Öffne einen PR, klicke auf das Symbol in der Toolbar, prüfe die aufgelisteten Schlüssel und klicke auf **Review-Status zurücksetzen**. Anschließend wird die Seite neu geladen.
+Öffne einen PR, klicke auf das Symbol in der Toolbar, prüfe die aufgelisteten Schlüssel und klicke auf **Review-Status zurücksetzen**. Anschließend wird die Seite neu geladen, sofern du das in den Einstellungen nicht abschaltest. Ohne Neuladen zeigt Bitbucket den zurückgesetzten Stand beim nächsten Laden der Seite.

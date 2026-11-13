@@ -7,6 +7,10 @@ popup:
   cleared:
     1: $1 Eintrag gelöscht. Seite wird neu geladen…
     n: $1 Einträge gelöscht. Seite wird neu geladen…
+  clearedNoReload:
+    1: $1 Eintrag gelöscht. Lade die Seite neu, damit es wirkt.
+    n: $1 Einträge gelöscht. Lade die Seite neu, damit es wirkt.
+  reloadNow: Jetzt neu laden
   uuidNotice: Dieser PR wurde über einen UUID-Link geöffnet. Bitbucket speichert den Review-Fortschritt unter dem regulären Workspace-/Repo-Namen, daher wird er hier nicht angezeigt.
   openRegularUrl: Reguläre URL öffnen
   redirectAutomatically: Diese automatisch weiterleiten…
@@ -25,6 +29,8 @@ errors:
 options:
   autoRedirect: Für UUID-Links automatisch die reguläre URL öffnen
   autoRedirectHelp: Pull-Request-Links mit $1-Segmenten werden auf Workspace/Repo umgeleitet, wo dein Review-Fortschritt gespeichert ist.
+  reloadAfterReset: Seite nach dem Zurücksetzen neu laden
+  reloadAfterResetHelp: Ausschalten, um z.B. einen noch nicht abgeschickten Kommentar erst fertigzustellen. Bitbucket zeigt den zurückgesetzten Stand nach dem nächsten Neuladen.
   language: Sprache
   languageAuto: Automatisch (Browsersprache)
   heading: Einstellungen

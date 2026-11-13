@@ -11,6 +11,7 @@ import {
   type StoredKey,
   withSlugs,
 } from '@/utils/reviewState';
+import { reloadAfterReset } from '@/utils/settings';
 
 const buttonClass =
   'w-full cursor-pointer rounded bg-accent px-3 py-2 font-semibold text-accent-fg hover:bg-accent-hover';
@@ -20,7 +21,7 @@ type State =
   | { status: 'not-pr' }
   | { status: 'uuid-url'; tabId: number; url: string; pr: PullRequest }
   | { status: 'ready'; tabId: number; pr: PullRequest; keys: StoredKey[] }
-  | { status: 'cleared'; count: number }
+  | { status: 'cleared'; count: number; tabId: number; reloaded: boolean }
   | { status: 'error'; message: string };
 
 function formatDate(at: number): string {
@@ -168,9 +169,12 @@ function App() {
   async function reset(tabId: number, ref: string) {
     try {
       const count = await runInTab(tabId, clearReviewKeys, [ref]);
-      await browser.tabs.reload(tabId);
-      setState({ status: 'cleared', count });
-      setTimeout(() => window.close(), 1200);
+      const reload = await reloadAfterReset.getValue();
+      setState({ status: 'cleared', count, tabId, reloaded: reload });
+      if (reload) {
+        await browser.tabs.reload(tabId);
+        setTimeout(() => window.close(), 1200);
+      }
     } catch (error) {
       setState({ status: 'error', message: String(error) });
     }
@@ -184,7 +188,28 @@ function App() {
     case 'error':
       return <p className="wrap-break-word text-danger">{state.message}</p>;
     case 'cleared':
-      return <p className="text-success">{t('popup.cleared', state.count)}</p>;
+      if (state.reloaded) {
+        return (
+          <p className="text-success">{t('popup.cleared', state.count)}</p>
+        );
+      }
+      return (
+        <>
+          <p className="text-success">
+            {t('popup.clearedNoReload', state.count)}
+          </p>
+          <button
+            type="button"
+            className={buttonClass}
+            onClick={async () => {
+              await browser.tabs.reload(state.tabId);
+              window.close();
+            }}
+          >
+            {t('popup.reloadNow')}
+          </button>
+        </>
+      );
     case 'uuid-url':
       return (
         <>

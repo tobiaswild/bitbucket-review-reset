@@ -7,7 +7,7 @@ import {
   language,
   t,
 } from '@/utils/i18n';
-import { autoRedirectUuid } from '@/utils/settings';
+import { autoRedirectUuid, reloadAfterReset } from '@/utils/settings';
 
 const REPO_URL = 'https://github.com/tobiaswild/bitbucket-review-reset';
 const PRIVACY_URL =
@@ -20,12 +20,14 @@ const LINKS = [
 
 function App() {
   const [enabled, setEnabled] = useState<boolean | null>(null);
+  const [reload, setReload] = useState<boolean | null>(null);
   const [selectedLanguage, setSelectedLanguage] = useState<Language | null>(
     null,
   );
 
   useEffect(() => {
     autoRedirectUuid.getValue().then(setEnabled);
+    reloadAfterReset.getValue().then(setReload);
     language.getValue().then(setSelectedLanguage);
   }, []);
 
@@ -38,13 +40,18 @@ function App() {
     await autoRedirectUuid.setValue(value);
   }
 
+  async function toggleReload(value: boolean) {
+    setReload(value);
+    await reloadAfterReset.setValue(value);
+  }
+
   async function changeLanguage(value: Language) {
     await language.setValue(value);
     await initI18n();
     setSelectedLanguage(value);
   }
 
-  if (enabled === null || selectedLanguage === null) {
+  if (enabled === null || reload === null || selectedLanguage === null) {
     return <p className="text-muted">{t('loading')}</p>;
   }
 
@@ -62,6 +69,20 @@ function App() {
           {t('options.autoRedirect')}
           <small className="block text-muted">
             {t('options.autoRedirectHelp', ['{uuid}'])}
+          </small>
+        </span>
+      </label>
+      <label className="mt-3 flex cursor-pointer items-start gap-2">
+        <input
+          type="checkbox"
+          className="mt-0.5"
+          checked={reload}
+          onChange={(event) => toggleReload(event.target.checked)}
+        />
+        <span>
+          {t('options.reloadAfterReset')}
+          <small className="block text-muted">
+            {t('options.reloadAfterResetHelp')}
           </small>
         </span>
       </label>
