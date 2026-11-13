@@ -50,6 +50,13 @@ popup:
   expires: Läuft ab
   expired: Abgelaufen
   storedKeys: Gespeicherte Keys ($1)
+pageButton:
+  reset: Review zurücksetzen
+  confirm: Zum Zurücksetzen erneut klicken
+  done: Review zurückgesetzt. Lädt neu…
+  doneNoReload: Review zurückgesetzt. Neu laden, damit es wirkt.
+  nothing: Kein gespeicherter Review-Status
+  failed: Zurücksetzen fehlgeschlagen
 errors:
   noRepoName: Bitbucket hat den Repository-Namen nicht zurückgegeben.
   noScriptResult: Das Skript konnte in diesem Tab nicht ausgeführt werden.
@@ -58,6 +65,8 @@ options:
   autoRedirectHelp: Pull-Request-Links mit $1-Segmenten werden auf Workspace/Repo umgeleitet, wo dein Review-Fortschritt gespeichert ist.
   reloadAfterReset: Seite nach dem Zurücksetzen neu laden
   reloadAfterResetHelp: Ausschalten, um z.B. einen noch nicht abgeschickten Kommentar erst fertigzustellen. Bitbucket zeigt den zurückgesetzten Stand nach dem nächsten Neuladen.
+  showPageButton: Zurücksetzen-Button auf Pull-Request-Seiten anzeigen
+  showPageButtonHelp: Ein kleiner Button unten links. Vor dem Zurücksetzen fragt er per zweitem Klick nach.
   shortcuts: "Tastenkürzel auf einem Pull Request:"
   shortcutReset: Review-Status zurücksetzen
   shortcutUndo: Letztes Zurücksetzen rückgängig machen (bis 10 Minuten danach)

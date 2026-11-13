@@ -19,7 +19,7 @@ Wenn du das Popup auf einem Pull Request in Bitbucket Cloud öffnest, liest die 
 `localStorage`-Einträge, die **Bitbucket selbst** für diesen Pull Request geschrieben hat, und
 zeigt dir, was darin steht: die als angesehen markierten Dateien, den zuletzt geprüften Commit
 und wann dieser Eintrag abläuft. Wenn du den Review-Status zurücksetzt, über das Popup, das
-Tastenkürzel oder das Kontextmenü der Seite, löscht sie diese Einträge oder nur die Teile bzw.
+Tastenkürzel, das Kontextmenü der Seite oder den Button auf der Seite, löscht sie diese Einträge oder nur die Teile bzw.
 Dateien, die du ausgewählt hast.
 
 Damit du ein Zurücksetzen rückgängig machen kannst, werden die gelöschten Einträge 10 Minuten
@@ -37,8 +37,9 @@ an `bitbucket.org` und nirgendwo sonst.
 
 ### Deine Einstellungen
 
-Gespeichert werden drei Einstellungen: ob UUID-Links automatisch weitergeleitet werden, ob die
-Seite nach dem Zurücksetzen neu geladen wird, und die Sprache der Oberfläche. Sie werden über
+Gespeichert werden vier Einstellungen: ob UUID-Links automatisch weitergeleitet werden, ob die
+Seite nach dem Zurücksetzen neu geladen wird, ob der Zurücksetzen-Button auf Pull-Request-Seiten
+erscheint, und die Sprache der Oberfläche. Sie werden über
 die `storage.sync`-API des Browsers gespeichert. Wenn du die Browser-Synchronisierung aktiviert hast, überträgt dein Browser sie über dein Browser-Konto
 zwischen deinen eigenen Geräten. Sie enthalten keine personenbezogenen Daten.
 
@@ -50,7 +51,7 @@ zwischen deinen eigenen Geräten. Sie enthalten keine personenbezogenen Daten.
 | `contextMenus` | **Review-Status dieses Pull Requests zurücksetzen** (und direkt nach einem Zurücksetzen **Letztes Zurücksetzen dieses Pull Requests rückgängig machen**) zum Kontextmenü der Seite auf Pull Requests hinzufügen. |
 | `scripting` | Eine kurze Funktion im Bitbucket-Tab ausführen, um die Einträge zum Review-Status aufzulisten und zu löschen. |
 | `storage` | Die oben beschriebenen Einstellungen speichern und, für 10 Minuten, die Einträge deines letzten Zurücksetzens. |
-| `https://bitbucket.org/*` | Damit die Erweiterung auf Pull-Request-Seiten von Bitbucket funktioniert und UUID-Links umschreiben kann. |
+| `https://bitbucket.org/*` | Damit die Erweiterung auf Pull-Request-Seiten von Bitbucket funktioniert: dort den Zurücksetzen-Button anzeigen und UUID-Links umschreiben. |
 
 ## Weitergabe von Daten
 

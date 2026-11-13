@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { fakeBrowser } from 'wxt/testing/fake-browser';
-import { resetTab, undoTab } from './reset';
+import { afterPageReset, resetTab, undoTab } from './reset';
 import { reloadAfterReset } from './settings';
 import { runInTab } from './tabs';
 import { getBackup, saveBackup } from './undo';
@@ -82,5 +82,37 @@ describe('undoTab', () => {
       tabId: 3,
       text: '–',
     });
+  });
+});
+
+describe('afterPageReset', () => {
+  beforeEach(() => fakeBrowser.reset());
+
+  const message = (ref: string, extra: Record<string, string> = {}) => ({
+    type: 'did-reset' as const,
+    ref,
+    entries: { ...entries, ...extra },
+  });
+
+  it('keeps the backup and asks for a reload', async () => {
+    await expect(
+      afterPageReset({ id: 3, url } as Browser.tabs.Tab, message('ws/repo/7')),
+    ).resolves.toEqual({ reloaded: true });
+    await expect(getBackup('ws/repo/7')).resolves.toEqual(entries);
+  });
+
+  it('drops entries that do not belong to the PR', async () => {
+    await afterPageReset(
+      { id: 3, url } as Browser.tabs.Tab,
+      message('ws/repo/7', { theme: 'dark' }),
+    );
+    await expect(getBackup('ws/repo/7')).resolves.toEqual(entries);
+  });
+
+  it('ignores a ref the tab does not show', async () => {
+    await expect(
+      afterPageReset({ id: 3, url } as Browser.tabs.Tab, message('ws/repo/8')),
+    ).resolves.toEqual({ reloaded: false });
+    await expect(getBackup('ws/repo/8')).resolves.toBeNull();
   });
 });
