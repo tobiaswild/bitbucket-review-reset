@@ -46,8 +46,8 @@ pnpm build
 
 ## Translations
 
-UI strings live in `apps/extension/locales/<lang>.yml`. To add a language,
-copy `en.yml` to `<lang>.yml` and translate it.
+New languages are welcome, see
+[the extension README](apps/extension/README.md#translations) for how to add one.
 
 ## License
 

@@ -14,7 +14,3 @@ body:
     attributes:
       label: Proposed solution
       description: How would you like it to work?
-  - type: textarea
-    id: alternatives
-    attributes:
-      label: Alternatives considered
