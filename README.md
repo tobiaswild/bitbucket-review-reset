@@ -47,6 +47,20 @@ pnpm check     # lint and format check (Biome)
 pnpm build     # production builds
 ```
 
+### Building the Firefox add-on from source
+
+For reviewers on addons.mozilla.org. Requires Node.js 24 and pnpm (the root
+`package.json` pins the exact version, pnpm downloads it automatically). From
+the repository root:
+
+```sh
+pnpm install --frozen-lockfile
+cd apps/extension
+pnpm build:firefox
+```
+
+The add-on is written to `apps/extension/.output/firefox-mv2`.
+
 See [CONTRIBUTING.md](CONTRIBUTING.md) for details.
 
 ## Security

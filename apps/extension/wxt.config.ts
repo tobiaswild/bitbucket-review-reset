@@ -1,4 +1,3 @@
-import { resolve } from 'node:path';
 import tailwindcss from '@tailwindcss/vite';
 import { defineConfig } from 'wxt';
 
@@ -23,18 +22,9 @@ export default defineConfig({
       },
     }),
   }),
-  // The Firefox sources zip must be buildable on its own. React and
-  // TypeScript versions come from the pnpm catalog, so the zip starts at the
-  // workspace root and carries the workspace files along.
+  // AMO gets the whole repository as source code (`git archive` in the
+  // release workflow), so WXT's own sources zip is not needed.
   zip: {
-    sourcesRoot: resolve(import.meta.dirname, '../..'),
-    includeSources: [
-      'package.json',
-      'pnpm-lock.yaml',
-      'pnpm-workspace.yaml',
-      'LICENSE',
-      'SOURCE_CODE_REVIEW.md',
-      'apps/extension/**',
-    ],
+    zipSources: false,
   },
 });

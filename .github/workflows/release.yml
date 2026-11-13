@@ -79,7 +79,9 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm zip:firefox
         working-directory: apps/extension
-      - run: pnpm exec wxt submit --firefox-zip .output/*-firefox.zip --firefox-sources-zip .output/*-sources.zip
+      # AMO reviewers rebuild the add-on from the whole repository at this tag.
+      - run: git archive --format=zip -o apps/extension/.output/sources.zip HEAD
+      - run: pnpm exec wxt submit --firefox-zip .output/*-firefox.zip --firefox-sources-zip .output/sources.zip
         working-directory: apps/extension
         env:
           FIREFOX_EXTENSION_ID: bitbucket-review-reset@tobiaswild.de
