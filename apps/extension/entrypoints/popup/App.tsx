@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { Fragment, useEffect, useState } from 'react';
 import { t } from '@/utils/i18n';
 import {
   clearReviewKeys,
@@ -30,23 +30,84 @@ function formatDate(at: number): string {
   });
 }
 
-/** Human-readable label for an entry, or `null` if its value isn't understood. */
-function describe({ key, value }: StoredKey): string | null {
-  const entry = describeReviewEntry(key, value);
-  switch (entry.kind) {
-    case 'files':
-      return t('popup.entry.files', entry.count);
-    case 'commit':
-      return t('popup.entry.commit', [entry.hash.slice(0, 12)]);
-    case 'expires': {
-      const date = formatDate(entry.at);
-      return entry.at < Date.now()
-        ? t('popup.entry.expired', [date])
-        : t('popup.entry.expires', [date]);
-    }
-    case 'unknown':
-      return null;
+interface Summary {
+  files?: number;
+  commit?: string;
+  expiresAt?: number;
+  /** Some values weren't understood, so the raw keys are worth a look. */
+  hasUnknown: boolean;
+}
+
+function summarize(keys: StoredKey[]): Summary {
+  const summary: Summary = { hasUnknown: false };
+  for (const { key, value } of keys) {
+    const entry = describeReviewEntry(key, value);
+    if (entry.kind === 'files') summary.files = entry.count;
+    else if (entry.kind === 'commit') summary.commit = entry.hash;
+    else if (entry.kind === 'expires') summary.expiresAt = entry.at;
+    else summary.hasUnknown = true;
   }
+  return summary;
+}
+
+function ReviewSummary({ keys }: { keys: StoredKey[] }) {
+  const { files, commit, expiresAt, hasUnknown } = summarize(keys);
+  const details: Array<[label: string, value: string, mono?: boolean]> = [];
+  if (commit) details.push([t('popup.lastCommit'), commit.slice(0, 12), true]);
+  if (expiresAt !== undefined) {
+    details.push([
+      expiresAt < Date.now() ? t('popup.expired') : t('popup.expires'),
+      formatDate(expiresAt),
+    ]);
+  }
+
+  return (
+    <div className="mb-3">
+      {(files !== undefined || details.length > 0) && (
+        <div className="rounded bg-surface px-3 py-2.5">
+          {files !== undefined && (
+            <p className="m-0 flex items-baseline gap-1.5">
+              <span className="text-lg font-semibold tabular-nums">
+                {files}
+              </span>
+              <span>{t('popup.filesViewed', files)}</span>
+            </p>
+          )}
+          {details.length > 0 && (
+            <dl
+              className={`m-0 grid grid-cols-[auto_1fr] gap-x-3 gap-y-0.5 text-[12px] ${files !== undefined ? 'mt-2 border-t border-bg pt-2' : ''}`}
+            >
+              {details.map(([label, value, mono]) => (
+                <Fragment key={label}>
+                  <dt className="text-muted">{label}</dt>
+                  <dd className={`m-0 truncate ${mono ? 'font-mono' : ''}`}>
+                    {value}
+                  </dd>
+                </Fragment>
+              ))}
+            </dl>
+          )}
+        </div>
+      )}
+      <details className="mt-2 text-[11px] text-muted" open={hasUnknown}>
+        <summary className="cursor-pointer select-none">
+          {t('popup.storedKeys', [String(keys.length)])}
+        </summary>
+        <ul className="mt-1 grid list-none grid-cols-1 gap-1 p-0">
+          {keys.map(({ key, size }) => (
+            <li
+              key={key}
+              title={key}
+              className="flex justify-between gap-2 rounded bg-surface px-2 py-1"
+            >
+              <code className="min-w-0 truncate">{key}</code>
+              <span className="shrink-0">{size} B</span>
+            </li>
+          ))}
+        </ul>
+      </details>
+    </div>
+  );
 }
 
 async function runInTab<A extends unknown[], R>(
@@ -158,26 +219,7 @@ function App() {
             <p className="text-muted">{t('popup.noState')}</p>
           ) : (
             <>
-              <ul className="mb-3 grid list-none grid-cols-1 gap-1 p-0">
-                {keys.map((stored) => {
-                  const label = describe(stored);
-                  return (
-                    <li
-                      key={stored.key}
-                      title={stored.key}
-                      className="rounded bg-surface px-2 py-1.5"
-                    >
-                      {label && <p className="m-0">{label}</p>}
-                      <div className="flex justify-between gap-2 text-[11px] text-muted">
-                        <code className="min-w-0 truncate">{stored.key}</code>
-                        {!label && (
-                          <span className="shrink-0">{stored.size} B</span>
-                        )}
-                      </div>
-                    </li>
-                  );
-                })}
-              </ul>
+              <ReviewSummary keys={keys} />
               <button
                 type="button"
                 className={buttonClass}

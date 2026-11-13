@@ -12,13 +12,13 @@ popup:
   redirectAutomatically: Redirect these automatically…
   noState: No saved review state for this PR.
   reset: Reset review state
-  entry:
-    files:
-      1: $1 file marked as viewed
-      n: $1 files marked as viewed
-    commit: Last reviewed commit $1
-    expires: Expires $1
-    expired: Expired $1
+  filesViewed:
+    1: file marked as viewed
+    n: files marked as viewed
+  lastCommit: Last reviewed
+  expires: Expires
+  expired: Expired
+  storedKeys: Stored keys ($1)
 errors:
   noRepoName: Bitbucket did not return the repository name.
   noScriptResult: Could not run script in this tab.
