@@ -17,8 +17,12 @@ export default defineConfig({
         gecko: {
           // Permanent add-on ID on addons.mozilla.org, never change it.
           id: 'bitbucket-review-reset@tobiaswild.de',
+          // data_collection_permissions needs Firefox 140 (Android 142), which
+          // also covers storage.session (115+) used to undo a reset.
+          strict_min_version: '140.0',
           data_collection_permissions: { required: ['none'] },
         },
+        gecko_android: { strict_min_version: '142.0' },
       },
     }),
   }),
