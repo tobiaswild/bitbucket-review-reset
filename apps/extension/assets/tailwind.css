@@ -1,4 +1,5 @@
-@import "tailwindcss";
+/* Scan only the extension UI, so builds from the Firefox sources zip match. */
+@import "tailwindcss" source("../entrypoints");
 
 :root {
   --bg: #ffffff;
