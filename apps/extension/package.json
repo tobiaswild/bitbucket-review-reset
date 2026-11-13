@@ -16,16 +16,16 @@
   },
   "dependencies": {
     "@wxt-dev/i18n": "^0.2.8",
-    "react": "^19.3.1",
-    "react-dom": "^19.3.1"
+    "react": "catalog:",
+    "react-dom": "catalog:"
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.3.3",
-    "@types/react": "^19.2.14",
+    "@types/react": "catalog:",
     "@types/react-dom": "^19.2.3",
     "@wxt-dev/module-react": "^1.1.5",
     "tailwindcss": "^4.3.3",
-    "typescript": "^7.0.2",
+    "typescript": "catalog:",
     "vitest": "^5.0.5",
     "web-ext": "^10.8.0",
     "wxt": "^0.21.5"
