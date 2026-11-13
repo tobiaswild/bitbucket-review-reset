@@ -4,3 +4,6 @@ pre-commit:
       glob: "*.{js,jsx,ts,tsx,json,jsonc,css,html}"
       run: node_modules/.bin/biome check --write --no-errors-on-unmatched --files-ignore-unknown=true {staged_files}
       stage_fixed: true
+    - name: react-doctor
+      glob: "*.{js,jsx,ts,tsx}"
+      run: node_modules/.bin/react-doctor --staged --blocking error
