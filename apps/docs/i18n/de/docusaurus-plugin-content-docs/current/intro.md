@@ -17,7 +17,7 @@ Bitbucket speichert diese Daten im `localStorage` unter drei Schlüsseln pro PR:
 
 ## Verwendung
 
-Öffne einen PR, klicke auf das Symbol in der Toolbar, prüfe die aufgelisteten Schlüssel und klicke auf **Review-Status zurücksetzen**. Anschließend wird die Seite neu geladen, sofern du das in den Einstellungen nicht abschaltest. Ohne Neuladen zeigt Bitbucket den zurückgesetzten Stand beim nächsten Laden der Seite.
+Öffne einen PR. Das Symbol in der Toolbar zeigt, wie viele Dateien du als angesehen markiert hast. Klicke darauf, prüfe die aufgelisteten Schlüssel und klicke auf **Review-Status zurücksetzen**. Anschließend wird die Seite neu geladen, sofern du das in den Einstellungen nicht abschaltest. Ohne Neuladen zeigt Bitbucket den zurückgesetzten Stand beim nächsten Laden der Seite.
 
 Schneller ohne Popup: Klicke unten links auf einem Pull Request zweimal auf **Review zurücksetzen** (der Button lässt sich in den Einstellungen ausblenden), drücke dort <kbd>Alt</kbd>+<kbd>Shift</kbd>+<kbd>R</kbd> oder wähle per Rechtsklick auf die Seite **Review-Status dieses Pull Requests zurücksetzen**. <kbd>Alt</kbd>+<kbd>Shift</kbd>+<kbd>U</kbd> macht das letzte Zurücksetzen rückgängig; solange das möglich ist, bietet auch das Kontextmenü **Letztes Zurücksetzen dieses Pull Requests rückgängig machen** an. Die Kürzel lassen sich in den Tastenkürzel-Einstellungen des Browsers für Erweiterungen ändern, verlinkt auf der Einstellungsseite der Erweiterung.
 

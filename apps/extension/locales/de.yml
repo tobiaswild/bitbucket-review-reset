@@ -67,6 +67,8 @@ options:
   reloadAfterResetHelp: Ausschalten, um z.B. einen noch nicht abgeschickten Kommentar erst fertigzustellen. Bitbucket zeigt den zurückgesetzten Stand nach dem nächsten Neuladen.
   showPageButton: Zurücksetzen-Button auf Pull-Request-Seiten anzeigen
   showPageButtonHelp: Ein kleiner Button unten links. Vor dem Zurücksetzen fragt er per zweitem Klick nach.
+  showBadge: Anzahl der angesehenen Dateien am Symbol in der Leiste anzeigen
+  showBadgeHelp: Nur auf Pull-Request-Seiten und nur, wenn Dateien als angesehen markiert sind.
   shortcuts: "Tastenkürzel auf einem Pull Request:"
   shortcutReset: Review-Status zurücksetzen
   shortcutUndo: Letztes Zurücksetzen rückgängig machen (bis 10 Minuten danach)

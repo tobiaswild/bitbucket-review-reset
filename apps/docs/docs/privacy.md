@@ -21,6 +21,10 @@ they contain: the files marked as viewed, the last reviewed commit and when that
 When you reset the review state, from the popup, the keyboard shortcut, the page's context
 menu or the reset button on the page, it deletes these entries, or only the parts or files you selected.
 
+While a pull request is open, the extension also counts the files marked as viewed, every two
+seconds while the tab is visible, and shows that number on its toolbar icon. Only the number is
+passed from the page to the extension.
+
 So that you can undo a reset, the deleted entries are kept for 10 minutes in the extension's
 session storage (`storage.session`). It stays on your device, is never synced, and is emptied
 when the browser closes. Nothing leaves your browser.
@@ -35,9 +39,9 @@ nowhere else.
 
 ### Your settings
 
-Four preferences are stored: whether UUID links are redirected automatically, whether the page
-reloads after a reset, whether the reset button shows on pull request pages, and the interface
-language. They are saved with the browser's
+Five preferences are stored: whether UUID links are redirected automatically, whether the page
+reloads after a reset, whether the reset button shows on pull request pages, whether the toolbar
+icon shows the number of viewed files, and the interface language. They are saved with the browser's
 `storage.sync` API, so if you have browser sync switched on, your browser copies them between your own devices through your browser account.
 They contain no personal data.
 
@@ -49,7 +53,7 @@ They contain no personal data.
 | `contextMenus` | Add **Reset review state of this pull request** (and, right after a reset, **Undo last reset of this pull request**) to the page's context menu on pull requests. |
 | `scripting` | Run a short function inside the Bitbucket tab to list and clear the review-state entries. |
 | `storage` | Save the settings described above and, for 10 minutes, the entries of your last reset. |
-| `https://bitbucket.org/*` | Let the extension work on Bitbucket pull request pages: show the reset button there and rewrite UUID links. |
+| `https://bitbucket.org/*` | Let the extension work on Bitbucket pull request pages: show the reset button and the number of viewed files, and rewrite UUID links. |
 
 ## Data sharing
 

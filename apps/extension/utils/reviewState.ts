@@ -67,6 +67,13 @@ export function describeReviewEntry(key: string, value: string): ReviewEntry {
   return { kind: 'unknown' };
 }
 
+/** Number of files marked as viewed in a `files-reviewed-state` value, or `null` if there is none. */
+export function countViewedFiles(value: string | null): number | null {
+  if (value === null) return null;
+  const entry = describeReviewEntry(FILES_SUFFIX, value);
+  return entry.kind === 'files' ? entry.paths.length : null;
+}
+
 /** Which part of the review state a key belongs to, for resetting parts separately. */
 export type ReviewKeyGroup = 'files' | 'commit' | 'other';
 

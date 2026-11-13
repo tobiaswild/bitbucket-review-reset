@@ -67,6 +67,8 @@ options:
   reloadAfterResetHelp: Turn this off to finish e.g. an unsent comment first. Bitbucket shows the cleared state after the next reload.
   showPageButton: Show a reset button on pull request pages
   showPageButtonHelp: A small button in the bottom left corner. It asks for a second click before resetting.
+  showBadge: Show the number of viewed files on the toolbar icon
+  showBadgeHelp: Only on pull request pages, and only when files are marked as viewed.
   shortcuts: "Keyboard shortcuts on a pull request:"
   shortcutReset: Reset the review state
   shortcutUndo: Undo the last reset (within 10 minutes)

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { isDidResetMessage } from './messages';
+import { isDidResetMessage, isReviewStateMessage } from './messages';
 
 describe('isDidResetMessage', () => {
   it('accepts a well-formed message', () => {
@@ -17,5 +17,15 @@ describe('isDidResetMessage', () => {
     { type: 'did-reset', ref: 'a/b/1', entries: { k: 1 } },
   ])('rejects %j', (message) => {
     expect(isDidResetMessage(message)).toBe(false);
+  });
+});
+
+describe('isReviewStateMessage', () => {
+  it.each([0, 8, null])('accepts count %j', (count) => {
+    expect(isReviewStateMessage({ type: 'review-state', count })).toBe(true);
+  });
+
+  it.each([-1, 1.5, '3', undefined])('rejects count %j', (count) => {
+    expect(isReviewStateMessage({ type: 'review-state', count })).toBe(false);
   });
 });

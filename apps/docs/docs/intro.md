@@ -17,7 +17,7 @@ Bitbucket keeps this in `localStorage` under three keys per PR:
 
 ## Usage
 
-Open a PR, click the toolbar icon, review the listed keys and hit **Reset review state**. The page reloads afterwards, unless you turn that off in the settings. Without the reload, Bitbucket shows the cleared state the next time the page loads.
+Open a PR. The toolbar icon shows how many files you marked as viewed. Click it, review the listed keys and hit **Reset review state**. The page reloads afterwards, unless you turn that off in the settings. Without the reload, Bitbucket shows the cleared state the next time the page loads.
 
 Faster without the popup: click **Reset review** in the bottom left corner of a pull request twice (the button can be hidden in the settings), press <kbd>Alt</kbd>+<kbd>Shift</kbd>+<kbd>R</kbd> on a pull request, or right-click the page and choose **Reset review state of this pull request**. <kbd>Alt</kbd>+<kbd>Shift</kbd>+<kbd>U</kbd> undoes the last reset; while that is possible, the context menu also offers **Undo last reset of this pull request**. The shortcuts can be changed in the browser's extension shortcut settings, linked from the extension's settings page.
 

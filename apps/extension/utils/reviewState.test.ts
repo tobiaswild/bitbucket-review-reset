@@ -1,6 +1,7 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import {
   clearReviewKeys,
+  countViewedFiles,
   describeReviewEntry,
   fetchRepoFullName,
   isReviewKeyFor,
@@ -127,6 +128,17 @@ describe('describeReviewEntry', () => {
     ['theme', 'dark'],
   ])('falls back to unknown for %s = %s', (key, value) => {
     expect(describeReviewEntry(key, value)).toEqual({ kind: 'unknown' });
+  });
+});
+
+describe('countViewedFiles', () => {
+  it.each([
+    [null, null],
+    ['{"a.ts":"a547bf3","b.ts":"d97a457"}', 2],
+    ['{}', 0],
+    ['not json', null],
+  ])('counts %j as %j', (value, count) => {
+    expect(countViewedFiles(value)).toBe(count);
   });
 });
 
