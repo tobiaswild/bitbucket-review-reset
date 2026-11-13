@@ -11,6 +11,16 @@ popup:
     1: Cleared $1 entry. Reload the page to apply.
     n: Cleared $1 entries. Reload the page to apply.
   reloadNow: Reload now
+  restored:
+    1: Restored $1 entry. Reloading…
+    n: Restored $1 entries. Reloading…
+  restoredNoReload:
+    1: Restored $1 entry. Reload the page to apply.
+    n: Restored $1 entries. Reload the page to apply.
+  undo: Undo
+  undoLastReset:
+    1: Undo last reset ($1 entry)
+    n: Undo last reset ($1 entries)
   uuidNotice: This PR was opened through a UUID link. Bitbucket stores review progress under the regular workspace/repo name, so it isn't shown here.
   openRegularUrl: Open regular URL
   redirectAutomatically: Redirect these automatically…
