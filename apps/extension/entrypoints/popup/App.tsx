@@ -161,8 +161,10 @@ function App() {
         setState({ status: 'uuid-url', tabId: tab.id, url: tab.url, pr });
         return;
       }
-      const keys = await runInTab(tab.id, listReviewKeys, [pr.ref]);
-      const backup = await getBackup(pr.ref);
+      const [keys, backup] = await Promise.all([
+        runInTab(tab.id, listReviewKeys, [pr.ref]),
+        getBackup(pr.ref),
+      ]);
       setState({ status: 'ready', tabId: tab.id, pr, keys, backup });
     })().catch((error) =>
       setState({ status: 'error', message: String(error) }),
