@@ -37,6 +37,12 @@ own API (`/!api/2.0/repositories/…`) for the repository name, from inside the 
 with the session you are already signed in with. That request goes to `bitbucket.org` and
 nowhere else.
 
+So that the next link to the same repository can be redirected straight away, the resolved
+name is remembered together with the UUIDs from the link, for up to 14 days and at most 200
+repositories. These names are kept with the browser's `storage.local` API, so they stay on this
+device and are not synced. You can see how many are stored and delete them at any time with
+**Clear** on the extension's settings page.
+
 ### Your settings
 
 Five preferences are stored: whether UUID links are redirected automatically, whether the page
@@ -52,7 +58,7 @@ They contain no personal data.
 | `activeTab` | Read the address of the current tab once you click the toolbar icon, press the keyboard shortcut or use the context menu entry, so the extension knows which pull request you are looking at. |
 | `contextMenus` | Add **Reset review state of this pull request** (and, right after a reset, **Undo last reset of this pull request**) to the page's context menu on pull requests. |
 | `scripting` | Run a short function inside the Bitbucket tab to list and clear the review-state entries. |
-| `storage` | Save the settings described above and, for 10 minutes, the entries of your last reset. |
+| `storage` | Save the settings described above, the remembered repository names and, for 10 minutes, the entries of your last reset. |
 | `https://bitbucket.org/*` | Let the extension work on Bitbucket pull request pages: show the reset button and the number of viewed files, and rewrite UUID links. |
 
 ## Data sharing

@@ -39,6 +39,13 @@ die API von Bitbucket selbst (`/!api/2.0/repositories/…`) nach dem Repository-
 Bitbucket-Tab heraus und mit der Sitzung, in der du bereits angemeldet bist. Diese Anfrage geht
 an `bitbucket.org` und nirgendwo sonst.
 
+Damit der nächste Link auf dasselbe Repository sofort weitergeleitet werden kann, merkt sich die
+Erweiterung den ermittelten Namen zusammen mit den UUIDs aus dem Link – höchstens 14 Tage lang und
+für maximal 200 Repositories. Diese Namen werden über die `storage.local`-API des Browsers
+gespeichert, bleiben also auf diesem Gerät und werden nicht synchronisiert. Auf der
+Einstellungsseite der Erweiterung siehst du, wie viele gespeichert sind, und kannst sie jederzeit
+mit **Leeren** löschen.
+
 ### Deine Einstellungen
 
 Gespeichert werden fünf Einstellungen: ob UUID-Links automatisch weitergeleitet werden, ob die
@@ -55,7 +62,7 @@ zwischen deinen eigenen Geräten. Sie enthalten keine personenbezogenen Daten.
 | `activeTab` | Die Adresse des aktuellen Tabs lesen, sobald du auf das Symbol in der Leiste klickst, das Tastenkürzel drückst oder den Eintrag im Kontextmenü wählst, damit die Erweiterung weiß, welchen Pull Request du ansiehst. |
 | `contextMenus` | **Review-Status dieses Pull Requests zurücksetzen** (und direkt nach einem Zurücksetzen **Letztes Zurücksetzen dieses Pull Requests rückgängig machen**) zum Kontextmenü der Seite auf Pull Requests hinzufügen. |
 | `scripting` | Eine kurze Funktion im Bitbucket-Tab ausführen, um die Einträge zum Review-Status aufzulisten und zu löschen. |
-| `storage` | Die oben beschriebenen Einstellungen speichern und, für 10 Minuten, die Einträge deines letzten Zurücksetzens. |
+| `storage` | Die oben beschriebenen Einstellungen und gemerkten Repository-Namen speichern und, für 10 Minuten, die Einträge deines letzten Zurücksetzens. |
 | `https://bitbucket.org/*` | Damit die Erweiterung auf Pull-Request-Seiten von Bitbucket funktioniert: dort den Zurücksetzen-Button und die Zahl der angesehenen Dateien anzeigen und UUID-Links umschreiben. |
 
 ## Weitergabe von Daten

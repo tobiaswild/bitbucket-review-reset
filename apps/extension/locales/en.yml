@@ -75,6 +75,11 @@ options:
   shortcutNone: not set
   shortcutHelp: Resetting is also in the page context menu on a pull request.
   shortcutChange: Change shortcut
+  repoNameCache:
+    1: $1 repository name remembered for UUID links
+    n: $1 repository names remembered for UUID links
+  repoNameCacheHelp: Names resolved from UUID links are kept in this browser for 14 days, so the redirect doesn't have to ask Bitbucket again.
+  clearRepoNameCache: Clear
   language: Language
   languageAuto: Automatic (browser language)
   heading: Settings

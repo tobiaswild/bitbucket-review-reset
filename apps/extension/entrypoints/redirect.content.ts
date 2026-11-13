@@ -1,3 +1,4 @@
+import { resolveRepoFullName } from '@/utils/repoNameCache';
 import {
   fetchRepoFullName,
   isUuidSegment,
@@ -14,7 +15,9 @@ export default defineContentScript({
     if (!pr || !(isUuidSegment(pr.workspace) || isUuidSegment(pr.repo))) return;
     if (!(await autoRedirectUuid.getValue())) return;
 
-    const fullName = await fetchRepoFullName(pr.workspace, pr.repo);
+    const fullName = await resolveRepoFullName(pr.workspace, pr.repo, () =>
+      fetchRepoFullName(pr.workspace, pr.repo),
+    );
     if (fullName) location.replace(withSlugs(location.href, fullName));
   },
 });

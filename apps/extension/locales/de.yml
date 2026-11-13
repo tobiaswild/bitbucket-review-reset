@@ -75,6 +75,11 @@ options:
   shortcutNone: nicht belegt
   shortcutHelp: Das Zurücksetzen steht auch im Kontextmenü der Seite eines Pull Requests.
   shortcutChange: Kürzel ändern
+  repoNameCache:
+    1: $1 Repository-Name für UUID-Links gemerkt
+    n: $1 Repository-Namen für UUID-Links gemerkt
+  repoNameCacheHelp: Aus UUID-Links ermittelte Namen werden 14 Tage lang in diesem Browser gespeichert, damit die Weiterleitung Bitbucket nicht erneut fragen muss.
+  clearRepoNameCache: Leeren
   language: Sprache
   languageAuto: Automatisch (Browsersprache)
   heading: Einstellungen
