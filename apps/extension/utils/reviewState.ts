@@ -14,10 +14,12 @@ export interface StoredKey {
 
 /** What a stored entry means, as far as we can tell from its key and value. */
 export type ReviewEntry =
-  | { kind: 'files'; count: number }
+  | { kind: 'files'; paths: string[] }
   | { kind: 'commit'; hash: string }
   | { kind: 'expires'; at: number }
   | { kind: 'unknown' };
+
+const FILES_SUFFIX = ':files-reviewed-state';
 
 function parseJson(value: string): unknown {
   try {
@@ -48,17 +50,33 @@ export function describeReviewEntry(key: string, value: string): ReviewEntry {
       : { kind: 'unknown' };
   }
 
-  if (key.endsWith(':files-reviewed-state')) {
-    if (Array.isArray(parsed)) return { kind: 'files', count: parsed.length };
+  if (key.endsWith(FILES_SUFFIX)) {
+    // Bitbucket stores `{ "path/to/file": "<short hash it was viewed at>" }`.
+    if (Array.isArray(parsed)) {
+      return { kind: 'files', paths: parsed.map(String).sort() };
+    }
     if (typeof parsed === 'object' && parsed !== null) {
-      const count = Object.values(parsed).filter(
-        (reviewed) => reviewed !== false && reviewed != null,
-      ).length;
-      return { kind: 'files', count };
+      const paths = Object.entries(parsed)
+        .filter(([, viewed]) => viewed !== false && viewed != null)
+        .map(([path]) => path)
+        .sort();
+      return { kind: 'files', paths };
     }
   }
 
   return { kind: 'unknown' };
+}
+
+/** Which part of the review state a key belongs to, for resetting parts separately. */
+export type ReviewKeyGroup = 'files' | 'commit' | 'other';
+
+export function reviewKeyGroup(key: string): ReviewKeyGroup {
+  if (key.endsWith(FILES_SUFFIX)) return 'files';
+  // The expiry belongs to the commit entry and is meaningless without it.
+  if (/^(?:__storejs_expire_mixin_)?last-reviewed-commit:/.test(key)) {
+    return 'commit';
+  }
+  return 'other';
 }
 
 const PR_PATH = /^\/([^/]+)\/([^/]+)\/pull-requests\/(\d+)(?:\/|$)/;
@@ -118,17 +136,58 @@ export function listReviewKeys(ref: string): StoredKey[] {
     });
 }
 
-/** Removes the PR's keys and returns what they held, so the reset can be undone. */
-export function clearReviewKeys(ref: string): Record<string, string> {
+/**
+ * Removes the PR's keys (or only those listed in `only`) and returns what they held, so the reset
+ * can be undone. `only` is `null` rather than optional because injected arguments must be serializable.
+ */
+export function clearReviewKeys(
+  ref: string,
+  only: string[] | null = null,
+): Record<string, string> {
   const escaped = ref.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   const pattern = new RegExp(`(^|:)${escaped}(:|$)`);
+  const selected = only && new Set(only);
   const removed: Record<string, string> = {};
   for (const key of Object.keys(localStorage)) {
-    if (!pattern.test(key)) continue;
+    if (!pattern.test(key) || (selected && !selected.has(key))) continue;
     removed[key] = localStorage.getItem(key) ?? '';
     localStorage.removeItem(key);
   }
   return removed;
+}
+
+/**
+ * Marks single files as not viewed by dropping them from the PR's `files-reviewed-state`.
+ * Returns the previous value under its key (for undo), or an empty object if nothing changed.
+ */
+export function unmarkReviewedFiles(
+  ref: string,
+  paths: string[],
+): Record<string, string> {
+  const key = `${ref}:files-reviewed-state`;
+  const previous = localStorage.getItem(key);
+  if (previous === null) return {};
+  let state: unknown;
+  try {
+    state = JSON.parse(previous);
+  } catch {
+    return {};
+  }
+  const unmark = new Set(paths);
+  let next: unknown;
+  if (Array.isArray(state)) {
+    next = state.filter((path) => !unmark.has(String(path)));
+  } else if (typeof state === 'object' && state !== null) {
+    next = Object.fromEntries(
+      Object.entries(state).filter(([path]) => !unmark.has(path)),
+    );
+  } else {
+    return {};
+  }
+  const value = JSON.stringify(next);
+  if (value === previous) return {};
+  localStorage.setItem(key, value);
+  return { [key]: previous };
 }
 
 /** Writes back entries from `clearReviewKeys`; skips keys that don't belong to `ref`. */

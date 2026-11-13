@@ -1,7 +1,13 @@
+import { useState } from 'react';
 import { t } from '@/utils/i18n';
-import type { PullRequest, StoredKey } from '@/utils/reviewState';
+import {
+  type PullRequest,
+  type ReviewKeyGroup,
+  reviewKeyGroup,
+  type StoredKey,
+} from '@/utils/reviewState';
 import type { Entries } from '@/utils/undo';
-import { ReviewSummary } from './ReviewSummary';
+import { presentGroups, ReviewSummary } from './ReviewSummary';
 
 const buttonClass =
   'w-full cursor-pointer rounded bg-accent px-3 py-2 font-semibold text-accent-fg hover:bg-accent-hover';
@@ -26,7 +32,11 @@ export type State =
       keys: StoredKey[];
       backup: Entries | null;
     }
-  | ({ status: 'cleared'; ref: string; entries: Entries } & Done)
+  | ({
+      status: 'cleared' | 'unmarked';
+      ref: string;
+      entries: Entries;
+    } & Done)
   | ({ status: 'restored' } & Done)
   | { status: 'error'; message: string };
 
@@ -43,6 +53,10 @@ export function DoneView({
     message = reloaded
       ? t('popup.cleared', count)
       : t('popup.clearedNoReload', count);
+  } else if (state.status === 'unmarked') {
+    message = reloaded
+      ? t('popup.unmarked', count)
+      : t('popup.unmarkedNoReload', count);
   } else {
     message = reloaded
       ? t('popup.restored', count)
@@ -63,7 +77,7 @@ export function DoneView({
           {t('popup.reloadNow')}
         </button>
       )}
-      {!reloaded && state.status === 'cleared' && (
+      {!reloaded && state.status !== 'restored' && (
         <button
           type="button"
           className={secondaryButtonClass}
@@ -100,16 +114,37 @@ export function UuidUrlView({
   );
 }
 
+function toggled<T>(set: ReadonlySet<T>, item: T): Set<T> {
+  const next = new Set(set);
+  if (!next.delete(item)) next.add(item);
+  return next;
+}
+
 export function ReadyView({
   state,
   onReset,
+  onUnmarkFiles,
   onUndo,
 }: {
   state: Extract<State, { status: 'ready' }>;
-  onReset: () => void;
+  /** `only` lists the keys to remove, or is `null` for all of them. */
+  onReset: (only: string[] | null) => void;
+  onUnmarkFiles: (paths: string[]) => void;
   onUndo: (backup: Entries) => void;
 }) {
   const { pr, keys, backup } = state;
+  const [excluded, setExcluded] = useState<ReadonlySet<ReviewKeyGroup>>(
+    () => new Set(),
+  );
+  const [pickedFiles, setPickedFiles] = useState<ReadonlySet<string>>(
+    () => new Set(),
+  );
+  const selectable = presentGroups(keys).length > 1;
+  const selectedKeys = keys
+    .filter(({ key }) => !excluded.has(reviewKeyGroup(key)))
+    .map(({ key }) => key);
+  const resetsAll = selectedKeys.length === keys.length;
+
   return (
     <>
       <h1 className="mb-3 break-all text-sm font-semibold">
@@ -120,9 +155,22 @@ export function ReadyView({
         <p className="text-muted">{t('popup.noState')}</p>
       ) : (
         <>
-          <ReviewSummary keys={keys} />
-          <button type="button" className={buttonClass} onClick={onReset}>
-            {t('popup.reset')}
+          <ReviewSummary
+            keys={keys}
+            selectable={selectable}
+            excluded={excluded}
+            onToggleGroup={(group) => setExcluded((set) => toggled(set, group))}
+            pickedFiles={pickedFiles}
+            onTogglePath={(path) => setPickedFiles((set) => toggled(set, path))}
+            onUnmarkFiles={() => onUnmarkFiles([...pickedFiles])}
+          />
+          <button
+            type="button"
+            className={`${buttonClass} disabled:cursor-not-allowed disabled:opacity-50`}
+            disabled={selectedKeys.length === 0}
+            onClick={() => onReset(resetsAll ? null : selectedKeys)}
+          >
+            {resetsAll ? t('popup.reset') : t('popup.resetSelected')}
           </button>
         </>
       )}
