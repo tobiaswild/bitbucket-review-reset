@@ -143,32 +143,140 @@ async function runInTab<A extends unknown[], R>(
   return injection.result as R;
 }
 
+/** Reads the active tab and decides which view the popup starts with. */
+async function loadInitialState(): Promise<State> {
+  const [tab] = await browser.tabs.query({
+    active: true,
+    currentWindow: true,
+  });
+  const pr = tab?.url ? parsePrFromUrl(tab.url) : null;
+  if (!tab?.id || !tab.url || !pr) return { status: 'not-pr' };
+  if (isUuidSegment(pr.workspace) || isUuidSegment(pr.repo)) {
+    return { status: 'uuid-url', tabId: tab.id, url: tab.url, pr };
+  }
+  const [keys, backup] = await Promise.all([
+    runInTab(tab.id, listReviewKeys, [pr.ref]),
+    getBackup(pr.ref),
+  ]);
+  return { status: 'ready', tabId: tab.id, pr, keys, backup };
+}
+
+function DoneView({
+  state,
+  onUndo,
+}: {
+  state: Extract<State, Done>;
+  onUndo: (tabId: number, ref: string, entries: Entries) => void;
+}) {
+  const { count, reloaded } = state;
+  let message: string;
+  if (state.status === 'cleared') {
+    message = reloaded
+      ? t('popup.cleared', count)
+      : t('popup.clearedNoReload', count);
+  } else {
+    message = reloaded
+      ? t('popup.restored', count)
+      : t('popup.restoredNoReload', count);
+  }
+  return (
+    <>
+      <p className="text-success">{message}</p>
+      {!reloaded && (
+        <button
+          type="button"
+          className={buttonClass}
+          onClick={async () => {
+            await browser.tabs.reload(state.tabId);
+            window.close();
+          }}
+        >
+          {t('popup.reloadNow')}
+        </button>
+      )}
+      {!reloaded && state.status === 'cleared' && (
+        <button
+          type="button"
+          className={secondaryButtonClass}
+          onClick={() => onUndo(state.tabId, state.ref, state.entries)}
+        >
+          {t('popup.undo')}
+        </button>
+      )}
+    </>
+  );
+}
+
+function UuidUrlView({ onOpenRegularUrl }: { onOpenRegularUrl: () => void }) {
+  return (
+    <>
+      <p className="text-muted">{t('popup.uuidNotice')}</p>
+      <button type="button" className={buttonClass} onClick={onOpenRegularUrl}>
+        {t('popup.openRegularUrl')}
+      </button>
+      <p className="mt-2 text-muted">
+        <button
+          type="button"
+          className="cursor-pointer bg-transparent p-0 text-accent underline hover:text-accent-hover"
+          onClick={() => browser.runtime.openOptionsPage()}
+        >
+          {t('popup.redirectAutomatically')}
+        </button>
+      </p>
+    </>
+  );
+}
+
+function ReadyView({
+  state,
+  onReset,
+  onUndo,
+}: {
+  state: Extract<State, { status: 'ready' }>;
+  onReset: () => void;
+  onUndo: (backup: Entries) => void;
+}) {
+  const { pr, keys, backup } = state;
+  return (
+    <>
+      <h1 className="mb-3 break-all text-sm font-semibold">
+        {pr.workspace}/{pr.repo}{' '}
+        <span className="font-normal text-muted">#{pr.id}</span>
+      </h1>
+      {keys.length === 0 ? (
+        <p className="text-muted">{t('popup.noState')}</p>
+      ) : (
+        <>
+          <ReviewSummary keys={keys} />
+          <button type="button" className={buttonClass} onClick={onReset}>
+            {t('popup.reset')}
+          </button>
+        </>
+      )}
+      {backup && (
+        <button
+          type="button"
+          className={secondaryButtonClass}
+          onClick={() => onUndo(backup)}
+        >
+          {t('popup.undoLastReset', Object.keys(backup).length)}
+        </button>
+      )}
+    </>
+  );
+}
+
 function App() {
   const [state, setState] = useState<State>({ status: 'loading' });
 
   useEffect(() => {
     (async () => {
-      const [tab] = await browser.tabs.query({
-        active: true,
-        currentWindow: true,
-      });
-      const pr = tab?.url ? parsePrFromUrl(tab.url) : null;
-      if (!tab?.id || !tab.url || !pr) {
-        setState({ status: 'not-pr' });
-        return;
+      try {
+        setState(await loadInitialState());
+      } catch (error) {
+        setState({ status: 'error', message: String(error) });
       }
-      if (isUuidSegment(pr.workspace) || isUuidSegment(pr.repo)) {
-        setState({ status: 'uuid-url', tabId: tab.id, url: tab.url, pr });
-        return;
-      }
-      const [keys, backup] = await Promise.all([
-        runInTab(tab.id, listReviewKeys, [pr.ref]),
-        getBackup(pr.ref),
-      ]);
-      setState({ status: 'ready', tabId: tab.id, pr, keys, backup });
-    })().catch((error) =>
-      setState({ status: 'error', message: String(error) }),
-    );
+    })();
   }, []);
 
   async function openCanonical(tabId: number, url: string, pr: PullRequest) {
@@ -236,101 +344,24 @@ function App() {
     case 'error':
       return <p className="wrap-break-word text-danger">{state.message}</p>;
     case 'cleared':
-    case 'restored': {
-      const { count, reloaded } = state;
-      let message: string;
-      if (state.status === 'cleared') {
-        message = reloaded
-          ? t('popup.cleared', count)
-          : t('popup.clearedNoReload', count);
-      } else {
-        message = reloaded
-          ? t('popup.restored', count)
-          : t('popup.restoredNoReload', count);
-      }
-      return (
-        <>
-          <p className="text-success">{message}</p>
-          {!reloaded && (
-            <button
-              type="button"
-              className={buttonClass}
-              onClick={async () => {
-                await browser.tabs.reload(state.tabId);
-                window.close();
-              }}
-            >
-              {t('popup.reloadNow')}
-            </button>
-          )}
-          {!reloaded && state.status === 'cleared' && (
-            <button
-              type="button"
-              className={secondaryButtonClass}
-              onClick={() => undo(state.tabId, state.ref, state.entries)}
-            >
-              {t('popup.undo')}
-            </button>
-          )}
-        </>
-      );
-    }
+    case 'restored':
+      return <DoneView state={state} onUndo={undo} />;
     case 'uuid-url':
       return (
-        <>
-          <p className="text-muted">{t('popup.uuidNotice')}</p>
-          <button
-            type="button"
-            className={buttonClass}
-            onClick={() => openCanonical(state.tabId, state.url, state.pr)}
-          >
-            {t('popup.openRegularUrl')}
-          </button>
-          <p className="mt-2 text-muted">
-            <button
-              type="button"
-              className="cursor-pointer bg-transparent p-0 text-accent underline hover:text-accent-hover"
-              onClick={() => browser.runtime.openOptionsPage()}
-            >
-              {t('popup.redirectAutomatically')}
-            </button>
-          </p>
-        </>
+        <UuidUrlView
+          onOpenRegularUrl={() =>
+            openCanonical(state.tabId, state.url, state.pr)
+          }
+        />
       );
-    case 'ready': {
-      const { tabId, pr, keys, backup } = state;
+    case 'ready':
       return (
-        <>
-          <h1 className="mb-3 break-all text-sm font-semibold">
-            {pr.workspace}/{pr.repo}{' '}
-            <span className="font-normal text-muted">#{pr.id}</span>
-          </h1>
-          {keys.length === 0 ? (
-            <p className="text-muted">{t('popup.noState')}</p>
-          ) : (
-            <>
-              <ReviewSummary keys={keys} />
-              <button
-                type="button"
-                className={buttonClass}
-                onClick={() => reset(tabId, pr.ref)}
-              >
-                {t('popup.reset')}
-              </button>
-            </>
-          )}
-          {backup && (
-            <button
-              type="button"
-              className={secondaryButtonClass}
-              onClick={() => undo(tabId, pr.ref, backup)}
-            >
-              {t('popup.undoLastReset', Object.keys(backup).length)}
-            </button>
-          )}
-        </>
+        <ReadyView
+          state={state}
+          onReset={() => reset(state.tabId, state.pr.ref)}
+          onUndo={(backup) => undo(state.tabId, state.pr.ref, backup)}
+        />
       );
-    }
   }
 }
 
