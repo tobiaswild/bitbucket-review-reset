@@ -1,133 +1,24 @@
-import { Fragment, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { t } from '@/utils/i18n';
 import {
   clearReviewKeys,
-  describeReviewEntry,
   fetchRepoFullName,
   isUuidSegment,
   listReviewKeys,
   type PullRequest,
   parsePrFromUrl,
   restoreReviewKeys,
-  type StoredKey,
   withSlugs,
 } from '@/utils/reviewState';
 import { reloadAfterReset } from '@/utils/settings';
 import { clearBackup, type Entries, getBackup, saveBackup } from '@/utils/undo';
-
-const buttonClass =
-  'w-full cursor-pointer rounded bg-accent px-3 py-2 font-semibold text-accent-fg hover:bg-accent-hover';
-const secondaryButtonClass =
-  'mt-2 w-full cursor-pointer rounded border border-accent bg-transparent px-3 py-2 font-semibold text-accent hover:border-accent-hover hover:text-accent-hover';
-
-/** Result of a reset or undo; `reloaded` is false when the reload setting is off. */
-interface Done {
-  tabId: number;
-  count: number;
-  reloaded: boolean;
-}
-
-type State =
-  | { status: 'loading' }
-  | { status: 'not-pr' }
-  | { status: 'uuid-url'; tabId: number; url: string; pr: PullRequest }
-  | {
-      status: 'ready';
-      tabId: number;
-      pr: PullRequest;
-      keys: StoredKey[];
-      backup: Entries | null;
-    }
-  | ({ status: 'cleared'; ref: string; entries: Entries } & Done)
-  | ({ status: 'restored' } & Done)
-  | { status: 'error'; message: string };
-
-function formatDate(at: number): string {
-  return new Date(at).toLocaleString(document.documentElement.lang || [], {
-    dateStyle: 'medium',
-    timeStyle: 'short',
-  });
-}
-
-interface Summary {
-  files?: number;
-  commit?: string;
-  expiresAt?: number;
-  /** Some values weren't understood, so the raw keys are worth a look. */
-  hasUnknown: boolean;
-}
-
-function summarize(keys: StoredKey[]): Summary {
-  const summary: Summary = { hasUnknown: false };
-  for (const { key, value } of keys) {
-    const entry = describeReviewEntry(key, value);
-    if (entry.kind === 'files') summary.files = entry.count;
-    else if (entry.kind === 'commit') summary.commit = entry.hash;
-    else if (entry.kind === 'expires') summary.expiresAt = entry.at;
-    else summary.hasUnknown = true;
-  }
-  return summary;
-}
-
-function ReviewSummary({ keys }: { keys: StoredKey[] }) {
-  const { files, commit, expiresAt, hasUnknown } = summarize(keys);
-  const details: Array<[label: string, value: string, mono?: boolean]> = [];
-  if (commit) details.push([t('popup.lastCommit'), commit.slice(0, 12), true]);
-  if (expiresAt !== undefined) {
-    details.push([
-      expiresAt < Date.now() ? t('popup.expired') : t('popup.expires'),
-      formatDate(expiresAt),
-    ]);
-  }
-
-  return (
-    <div className="mb-3">
-      {(files !== undefined || details.length > 0) && (
-        <div className="rounded bg-surface px-3 py-2.5">
-          {files !== undefined && (
-            <p className="m-0 flex items-baseline gap-1.5">
-              <span className="text-lg font-semibold tabular-nums">
-                {files}
-              </span>
-              <span>{t('popup.filesViewed', files)}</span>
-            </p>
-          )}
-          {details.length > 0 && (
-            <dl
-              className={`m-0 grid grid-cols-[auto_1fr] gap-x-3 gap-y-0.5 text-[12px] ${files !== undefined ? 'mt-2 border-t border-bg pt-2' : ''}`}
-            >
-              {details.map(([label, value, mono]) => (
-                <Fragment key={label}>
-                  <dt className="text-muted">{label}</dt>
-                  <dd className={`m-0 truncate ${mono ? 'font-mono' : ''}`}>
-                    {value}
-                  </dd>
-                </Fragment>
-              ))}
-            </dl>
-          )}
-        </div>
-      )}
-      <details className="mt-2 text-[11px] text-muted" open={hasUnknown}>
-        <summary className="cursor-pointer select-none">
-          {t('popup.storedKeys', [String(keys.length)])}
-        </summary>
-        <ul className="mt-1 grid list-none grid-cols-1 gap-1 p-0">
-          {keys.map(({ key, size }) => (
-            <li
-              key={key}
-              title={key}
-              className="flex justify-between gap-2 rounded bg-surface px-2 py-1"
-            >
-              <code className="min-w-0 truncate">{key}</code>
-              <span className="shrink-0">{size} B</span>
-            </li>
-          ))}
-        </ul>
-      </details>
-    </div>
-  );
-}
+import {
+  type Done,
+  DoneView,
+  ReadyView,
+  type State,
+  UuidUrlView,
+} from './views';
 
 async function runInTab<A extends unknown[], R>(
   tabId: number,
@@ -159,111 +50,6 @@ async function loadInitialState(): Promise<State> {
     getBackup(pr.ref),
   ]);
   return { status: 'ready', tabId: tab.id, pr, keys, backup };
-}
-
-function DoneView({
-  state,
-  onUndo,
-}: {
-  state: Extract<State, Done>;
-  onUndo: (tabId: number, ref: string, entries: Entries) => void;
-}) {
-  const { count, reloaded } = state;
-  let message: string;
-  if (state.status === 'cleared') {
-    message = reloaded
-      ? t('popup.cleared', count)
-      : t('popup.clearedNoReload', count);
-  } else {
-    message = reloaded
-      ? t('popup.restored', count)
-      : t('popup.restoredNoReload', count);
-  }
-  return (
-    <>
-      <p className="text-success">{message}</p>
-      {!reloaded && (
-        <button
-          type="button"
-          className={buttonClass}
-          onClick={async () => {
-            await browser.tabs.reload(state.tabId);
-            window.close();
-          }}
-        >
-          {t('popup.reloadNow')}
-        </button>
-      )}
-      {!reloaded && state.status === 'cleared' && (
-        <button
-          type="button"
-          className={secondaryButtonClass}
-          onClick={() => onUndo(state.tabId, state.ref, state.entries)}
-        >
-          {t('popup.undo')}
-        </button>
-      )}
-    </>
-  );
-}
-
-function UuidUrlView({ onOpenRegularUrl }: { onOpenRegularUrl: () => void }) {
-  return (
-    <>
-      <p className="text-muted">{t('popup.uuidNotice')}</p>
-      <button type="button" className={buttonClass} onClick={onOpenRegularUrl}>
-        {t('popup.openRegularUrl')}
-      </button>
-      <p className="mt-2 text-muted">
-        <button
-          type="button"
-          className="cursor-pointer bg-transparent p-0 text-accent underline hover:text-accent-hover"
-          onClick={() => browser.runtime.openOptionsPage()}
-        >
-          {t('popup.redirectAutomatically')}
-        </button>
-      </p>
-    </>
-  );
-}
-
-function ReadyView({
-  state,
-  onReset,
-  onUndo,
-}: {
-  state: Extract<State, { status: 'ready' }>;
-  onReset: () => void;
-  onUndo: (backup: Entries) => void;
-}) {
-  const { pr, keys, backup } = state;
-  return (
-    <>
-      <h1 className="mb-3 break-all text-sm font-semibold">
-        {pr.workspace}/{pr.repo}{' '}
-        <span className="font-normal text-muted">#{pr.id}</span>
-      </h1>
-      {keys.length === 0 ? (
-        <p className="text-muted">{t('popup.noState')}</p>
-      ) : (
-        <>
-          <ReviewSummary keys={keys} />
-          <button type="button" className={buttonClass} onClick={onReset}>
-            {t('popup.reset')}
-          </button>
-        </>
-      )}
-      {backup && (
-        <button
-          type="button"
-          className={secondaryButtonClass}
-          onClick={() => onUndo(backup)}
-        >
-          {t('popup.undoLastReset', Object.keys(backup).length)}
-        </button>
-      )}
-    </>
-  );
 }
 
 function App() {
