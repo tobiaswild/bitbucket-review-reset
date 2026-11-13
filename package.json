@@ -2,7 +2,7 @@
   "name": "bitbucket-review-reset",
   "version": "1.0.0",
   "private": true,
-  "description": "",
+  "description": "Browser extension that resets the locally stored review progress of Bitbucket Cloud pull requests",
   "scripts": {
     "dev": "pnpm -r dev",
     "build": "pnpm -r build",
@@ -15,8 +15,8 @@
     "knip": "knip"
   },
   "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "author": "Tobias Wild",
+  "license": "MIT",
   "devEngines": {
     "packageManager": {
       "name": "pnpm",
