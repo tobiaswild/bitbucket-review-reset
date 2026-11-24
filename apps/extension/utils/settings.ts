@@ -18,6 +18,22 @@ export const showPageButton = storage.defineItem<boolean>(
   { fallback: true },
 );
 
+export const PAGE_BUTTON_POSITIONS = ['approve', 'menu', 'floating'] as const;
+
+export type PageButtonPosition = (typeof PAGE_BUTTON_POSITIONS)[number];
+
+export function isPageButtonPosition(
+  value: string,
+): value is PageButtonPosition {
+  return PAGE_BUTTON_POSITIONS.some((position) => position === value);
+}
+
+/** Where the reset button goes: next to Approve, in the "…" menu or in the bottom left corner. */
+export const pageButtonPosition = storage.defineItem<PageButtonPosition>(
+  'sync:pageButtonPosition',
+  { fallback: 'approve' },
+);
+
 /** Show the number of viewed files on the toolbar icon. */
 export const showBadge = storage.defineItem<boolean>('sync:showBadge', {
   fallback: true,

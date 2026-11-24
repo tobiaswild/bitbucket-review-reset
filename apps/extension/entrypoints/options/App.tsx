@@ -9,6 +9,10 @@ import {
 } from '@/utils/i18n';
 import {
   autoRedirectUuid,
+  isPageButtonPosition,
+  PAGE_BUTTON_POSITIONS,
+  type PageButtonPosition,
+  pageButtonPosition,
   reloadAfterReset,
   showBadge,
   showPageButton,
@@ -28,6 +32,8 @@ function App() {
   const [enabled, setEnabled] = useState<boolean | null>(null);
   const [reload, setReload] = useState<boolean | null>(null);
   const [pageButton, setPageButton] = useState<boolean | null>(null);
+  const [buttonPosition, setButtonPosition] =
+    useState<PageButtonPosition | null>(null);
   const [badge, setBadge] = useState<boolean | null>(null);
   const [selectedLanguage, setSelectedLanguage] = useState<Language | null>(
     null,
@@ -37,6 +43,7 @@ function App() {
     autoRedirectUuid.getValue().then(setEnabled);
     reloadAfterReset.getValue().then(setReload);
     showPageButton.getValue().then(setPageButton);
+    pageButtonPosition.getValue().then(setButtonPosition);
     showBadge.getValue().then(setBadge);
     language.getValue().then(setSelectedLanguage);
   }, []);
@@ -60,6 +67,11 @@ function App() {
     await showPageButton.setValue(value);
   }
 
+  async function changeButtonPosition(value: PageButtonPosition) {
+    setButtonPosition(value);
+    await pageButtonPosition.setValue(value);
+  }
+
   async function toggleBadge(value: boolean) {
     setBadge(value);
     await showBadge.setValue(value);
@@ -75,6 +87,7 @@ function App() {
     enabled === null ||
     reload === null ||
     pageButton === null ||
+    buttonPosition === null ||
     badge === null ||
     selectedLanguage === null
   ) {
@@ -125,6 +138,23 @@ function App() {
             {t('options.showPageButtonHelp')}
           </small>
         </span>
+      </label>
+      <label className="mt-1 ml-5 flex items-center gap-2">
+        <span>{t('options.pageButtonPosition')}</span>
+        <select
+          value={buttonPosition}
+          disabled={!pageButton}
+          onChange={(event) => {
+            const { value } = event.target;
+            if (isPageButtonPosition(value)) changeButtonPosition(value);
+          }}
+        >
+          {PAGE_BUTTON_POSITIONS.map((position) => (
+            <option key={position} value={position}>
+              {t(`options.pageButtonPositions.${position}`)}
+            </option>
+          ))}
+        </select>
       </label>
       <label className="mt-3 flex cursor-pointer items-start gap-2">
         <input
