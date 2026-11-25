@@ -67,17 +67,17 @@ function GroupRow({
   );
 }
 
-/** Truncates the directory rather than the file name when space runs out. */
+/** The directory, truncated, with the file name in full below it. */
 function FilePath({ path }: { path: string }) {
   const slash = path.lastIndexOf('/');
   return (
-    <code className="flex min-w-0 text-[11px]">
+    <code className="min-w-0 flex-1 text-[11px]">
       {slash >= 0 && (
-        <span className="min-w-0 truncate text-muted">
+        <span className="block truncate text-muted">
           {path.slice(0, slash + 1)}
         </span>
       )}
-      <span className="shrink-0">{path.slice(slash + 1)}</span>
+      <span className="block wrap-anywhere">{path.slice(slash + 1)}</span>
     </code>
   );
 }
@@ -98,15 +98,16 @@ function FileList({
       <summary className="cursor-pointer select-none text-muted">
         {t('popup.showFiles')}
       </summary>
-      <ul className="mt-1 max-h-48 list-none overflow-y-auto p-0">
+      <ul className="mt-1 max-h-64 list-none overflow-y-auto p-0">
         {paths.map((path) => (
           <li key={path}>
             <label
               title={path}
-              className="flex cursor-pointer items-center gap-2 rounded px-1 py-0.5 hover:bg-bg"
+              className="flex cursor-pointer items-start gap-2 rounded px-1 py-0.5 hover:bg-bg"
             >
               <input
                 type="checkbox"
+                className="mt-0.5"
                 checked={picked.has(path)}
                 onChange={() => onTogglePath(path)}
               />
@@ -160,7 +161,7 @@ export function ReviewSummary({
   return (
     <div className="mb-3">
       {hasRows && (
-        <div className="grid gap-2 rounded bg-surface px-3 py-2.5 [&>*+*]:border-t [&>*+*]:border-bg [&>*+*]:pt-2">
+        <div className="grid grid-cols-1 gap-2 rounded bg-surface px-3 py-2.5 [&>*+*]:border-t [&>*+*]:border-bg [&>*+*]:pt-2">
           {files !== undefined && (
             <div>
               <GroupRow
