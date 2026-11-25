@@ -13,30 +13,65 @@ export const LANGUAGES = [
   { code: 'de', label: 'Deutsch' },
 ] as const;
 
-export type Language = 'auto' | (typeof LANGUAGES)[number]['code'];
+type LanguageCode = (typeof LANGUAGES)[number]['code'];
+
+export type Language = 'auto' | 'bitbucket' | LanguageCode;
 
 export function isLanguage(value: string): value is Language {
-  return value === 'auto' || LANGUAGES.some(({ code }) => code === value);
+  return (
+    value === 'auto' ||
+    value === 'bitbucket' ||
+    LANGUAGES.some(({ code }) => code === value)
+  );
 }
 
-/** UI language: `auto` follows the browser, anything else is fixed. */
+/** UI language: `auto` follows the browser, `bitbucket` follows Bitbucket, the rest is fixed. */
 export const language = storage.defineItem<Language>('sync:language', {
   fallback: 'auto',
 });
 
+/** Locale Bitbucket last showed its own UI in, e.g. `en` or `ja`; null until a page was opened. */
+export const bitbucketLocale = storage.defineItem<string | null>(
+  'local:bitbucketLocale',
+  { fallback: null },
+);
+
+/**
+ * Bitbucket's UI locale from the inline script that defines `window.__app_data__`. Its
+ * `<html lang>` is always `en`, whatever the UI language is.
+ */
+export function parseBitbucketLocale(script: string): string | null {
+  if (!script.includes('__app_data__')) return null;
+  return /"locale":\s*"([A-Za-z]{2,3}(?:[-_]\w+)*)"/.exec(script)?.[1] ?? null;
+}
+
+/** The translation for a locale of Bitbucket; English where there is none. */
+export function languageForLocale(locale: string): LanguageCode {
+  const base = locale.toLowerCase().split(/[-_]/)[0];
+  return LANGUAGES.find(({ code }) => code === base)?.code ?? 'en';
+}
+
+/** The language to show, or null to leave it to the browser. */
+async function resolveLanguage(): Promise<LanguageCode | null> {
+  const selected = await language.getValue();
+  if (selected === 'auto') return null;
+  if (selected !== 'bitbucket') return selected;
+  const locale = await bitbucketLocale.getValue();
+  return locale ? languageForLocale(locale) : null;
+}
+
 let translate: Translate = i18n.t;
 
-/** Drop-in for `i18n.t` that honours the language setting after `initI18n()`. */
+/** Drop-in for `i18n.t` that honours the language setting after `loadTranslations()`. */
 export const t = ((...args: Parameters<Translate>) =>
   (translate as (...a: unknown[]) => string)(...args)) as Translate;
 
-/** Loads the configured language; call before rendering and after changing it. */
-export async function initI18n(): Promise<void> {
-  const selected = await language.getValue();
-  if (selected === 'auto') {
+/** Loads the configured language and returns it, or null if the browser's is used. */
+export async function loadTranslations(): Promise<LanguageCode | null> {
+  const selected = await resolveLanguage();
+  if (selected === null) {
     translate = i18n.t;
-    document.documentElement.lang = browser.i18n.getUILanguage();
-    return;
+    return null;
   }
   const url = new URL(
     `/_locales/${selected}/messages.json`,
@@ -48,7 +83,23 @@ export async function initI18n(): Promise<void> {
   }
   const messages: Messages = await response.json();
   translate = createTranslate(messages) as unknown as Translate;
-  document.documentElement.lang = selected;
+  return selected;
+}
+
+/** For the extension's own pages; call before rendering and after changing the language. */
+export async function initI18n(): Promise<void> {
+  document.documentElement.lang =
+    (await loadTranslations()) ?? browser.i18n.getUILanguage();
+}
+
+/** Calls back when the language setting or Bitbucket's own language changes. */
+export function watchLanguage(onChange: () => void): () => void {
+  const unwatchSetting = language.watch(onChange);
+  const unwatchLocale = bitbucketLocale.watch(onChange);
+  return () => {
+    unwatchSetting();
+    unwatchLocale();
+  };
 }
 
 // browser.i18n can't be told to use another locale, so for a fixed language

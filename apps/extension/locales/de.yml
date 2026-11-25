@@ -82,6 +82,7 @@ options:
   shortcutChange: Kürzel ändern
   language: Sprache
   languageAuto: Automatisch (Browsersprache)
+  languageBitbucket: Wie Bitbucket
   heading: Einstellungen
   about: Über
   version: Version $1

@@ -5,7 +5,7 @@ title: Datenschutzerklärung
 
 # Datenschutzerklärung
 
-_Zuletzt aktualisiert: 13. November 2026_
+_Zuletzt aktualisiert: 25. November 2026_
 
 Bitbucket Review Reset erhebt, speichert und überträgt keine personenbezogenen Daten. Es gibt
 keine Analyse, kein Tracking, keine Telemetrie und keinen Server dieses Projekts. Alles, was die
@@ -38,6 +38,12 @@ Repository-Namen verwendet. Um daraus wieder einen lesbaren Link zu machen, frag
 die API von Bitbucket selbst (`/!api/2.0/repositories/…`) nach dem Repository-Namen – aus dem
 Bitbucket-Tab heraus und mit der Sitzung, in der du bereits angemeldet bist. Diese Anfrage geht
 an `bitbucket.org` und nirgendwo sonst.
+
+### Sprache von Bitbucket
+
+Wenn du eine Bitbucket-Seite öffnest, liest die Erweiterung, in welcher Sprache Bitbucket angezeigt
+wird, und merkt sich dieses Sprachkürzel im lokalen Erweiterungsspeicher des Browsers, damit sie dieselbe
+Sprache verwenden kann, wenn du das in den Einstellungen wählst.
 
 ### Deine Einstellungen
 

@@ -1,5 +1,5 @@
 import type { ContentScriptContext } from 'wxt/utils/content-script-context';
-import { t } from '@/utils/i18n';
+import { loadTranslations, t, watchLanguage } from '@/utils/i18n';
 import type { DidResetMessage, DidResetResponse } from '@/utils/messages';
 import {
   clearReviewKeys,
@@ -234,7 +234,19 @@ export default defineContentScript({
       else removeButton();
     }
 
-    await update();
+    async function updateLanguage() {
+      try {
+        await loadTranslations();
+      } catch (error) {
+        console.error('[bitbucket-review-reset] translations failed', error);
+      }
+      if (ctx.isInvalid) return;
+      // The labels are set when the button is created.
+      removeButton();
+      await update();
+    }
+
+    await updateLanguage();
     ctx.addEventListener(window, 'wxt:locationchange', update);
     // Approve renders late, moves to the sticky header on scroll and can be re-rendered any time.
     ctx.setInterval(() => {
@@ -248,7 +260,9 @@ export default defineContentScript({
     }
     const unwatchShow = showPageButton.watch(update);
     const unwatchPosition = pageButtonPosition.watch(update);
+    const unwatchLanguage = watchLanguage(updateLanguage);
     ctx.onInvalidated(() => {
+      unwatchLanguage();
       unwatchShow();
       unwatchPosition();
       removeButton();

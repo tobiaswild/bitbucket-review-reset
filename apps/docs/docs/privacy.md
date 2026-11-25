@@ -5,7 +5,7 @@ title: Privacy Policy
 
 # Privacy Policy
 
-_Last updated: 13 November 2026_
+_Last updated: 25 November 2026_
 
 Bitbucket Review Reset does not collect, store or transmit any personal data. There is no
 analytics, no tracking, no telemetry, and no server run by this project. Everything the
@@ -36,6 +36,12 @@ repository names. To turn such a link back into a readable one, the extension as
 own API (`/!api/2.0/repositories/…`) for the repository name, from inside the Bitbucket tab and
 with the session you are already signed in with. That request goes to `bitbucket.org` and
 nowhere else.
+
+### Bitbucket's language
+
+When you open a Bitbucket page, the extension reads which language Bitbucket is shown in and
+remembers that language code in the browser's local extension storage, so it can use the same language if you
+choose that in the settings.
 
 ### Your settings
 
