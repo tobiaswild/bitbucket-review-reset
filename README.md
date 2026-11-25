@@ -24,8 +24,9 @@ state**. The page reloads afterwards,
 unless you turn that off in the settings. For 10 minutes after a reset the
 popup offers to undo it.
 
-Without opening the popup, use the **Reset review** button in the bottom left
-corner of a pull request (click twice), press <kbd>Alt</kbd>+<kbd>Shift</kbd>+<kbd>R</kbd>
+Without opening the popup, use the **Reset review** button next to
+**Approve** on a pull request (click twice; the settings
+can move it to the “…” menu or the bottom left corner), press <kbd>Alt</kbd>+<kbd>Shift</kbd>+<kbd>R</kbd>
 or pick **Reset review state of this pull request** from the page's context
 menu. <kbd>Alt</kbd>+<kbd>Shift</kbd>+<kbd>U</kbd> or **Undo last reset of this pull
 request** in the context menu undoes the last reset. The shortcuts can be
