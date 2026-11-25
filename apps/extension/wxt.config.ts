@@ -12,6 +12,13 @@ export default defineConfig({
     name: '__MSG_extName__',
     description: '__MSG_extDescription__',
     permissions: ['activeTab', 'contextMenus', 'scripting', 'storage'],
+    // Lets the reset button on the page load the language set in the options.
+    web_accessible_resources: [
+      {
+        resources: ['_locales/*/messages.json'],
+        matches: ['https://bitbucket.org/*'],
+      },
+    ],
     commands: {
       'reset-review': {
         suggested_key: { default: 'Alt+Shift+R' },

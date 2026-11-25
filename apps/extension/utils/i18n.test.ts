@@ -1,5 +1,10 @@
 import { describe, expect, it } from 'vitest';
-import { createTranslate, isLanguage } from './i18n';
+import {
+  createTranslate,
+  isLanguage,
+  languageForLocale,
+  parseBitbucketLocale,
+} from './i18n';
 
 const t = createTranslate({
   hello: { message: 'Hello' },
@@ -29,11 +34,48 @@ describe('createTranslate', () => {
 });
 
 describe('isLanguage', () => {
-  it.each(['auto', 'en', 'de'])('accepts %s', (value) => {
+  it.each(['auto', 'bitbucket', 'en', 'de'])('accepts %s', (value) => {
     expect(isLanguage(value)).toBe(true);
   });
 
   it.each(['', 'fr', 'EN', 'toString'])('rejects %j', (value) => {
     expect(isLanguage(value)).toBe(false);
+  });
+});
+
+describe('parseBitbucketLocale', () => {
+  it('reads the locale of the app data', () => {
+    const script =
+      'window.__app_data__ = {"marketing_consent_locale": "fr", "locale": "ja", "path": "/"}';
+    expect(parseBitbucketLocale(script)).toBe('ja');
+  });
+
+  it('ignores a locale inside a string value', () => {
+    const script =
+      'window.__app_data__ = {"title": "\\"locale\\": \\"de\\"", "locale": "en"}';
+    expect(parseBitbucketLocale(script)).toBe('en');
+  });
+
+  it('does not backtrack on long malformed locales', () => {
+    const script = `window.__app_data__ = {"locale": "aa${'_a'.repeat(50_000)}!"}`;
+    const start = performance.now();
+    expect(parseBitbucketLocale(script)).toBeNull();
+    expect(performance.now() - start).toBeLessThan(1000);
+  });
+
+  it('ignores other scripts and missing locales', () => {
+    expect(parseBitbucketLocale('x = {"locale": "de"}')).toBeNull();
+    expect(parseBitbucketLocale('window.__app_data__ = {}')).toBeNull();
+  });
+});
+
+describe('languageForLocale', () => {
+  it.each([
+    ['de', 'de'],
+    ['de-AT', 'de'],
+    ['en_GB', 'en'],
+    ['ja', 'en'],
+  ])('maps %s to %s', (locale, code) => {
+    expect(languageForLocale(locale)).toBe(code);
   });
 });

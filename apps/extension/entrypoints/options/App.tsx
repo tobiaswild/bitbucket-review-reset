@@ -181,6 +181,7 @@ function App() {
           }}
         >
           <option value="auto">{t('options.languageAuto')}</option>
+          <option value="bitbucket">{t('options.languageBitbucket')}</option>
           {LANGUAGES.map(({ code, label }) => (
             <option key={code} value={code}>
               {label}

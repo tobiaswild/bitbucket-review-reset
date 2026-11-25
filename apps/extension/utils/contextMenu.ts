@@ -29,6 +29,16 @@ export function createMenus() {
   });
 }
 
+/** Applies the current language to the existing entries. */
+export async function updateMenuTitles() {
+  await browser.contextMenus.update(RESET_MENU_ID, {
+    title: t('contextMenu.reset'),
+  });
+  await browser.contextMenus.update(UNDO_MENU_ID, {
+    title: t('contextMenu.undo'),
+  });
+}
+
 let hideTimer: ReturnType<typeof setTimeout> | undefined;
 
 /**

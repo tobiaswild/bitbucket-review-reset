@@ -4,7 +4,9 @@ import {
   RESET_MENU_ID,
   syncUndoMenu,
   UNDO_MENU_ID,
+  updateMenuTitles,
 } from '@/utils/contextMenu';
+import { loadTranslations, watchLanguage } from '@/utils/i18n';
 import { isDidResetMessage, isReviewStateMessage } from '@/utils/messages';
 import { afterPageReset, resetTab, undoTab } from '@/utils/reset';
 import { watchBackup } from '@/utils/undo';
@@ -15,6 +17,14 @@ const ACTIONS: Record<string, TabAction> = {
   [RESET_MENU_ID]: resetTab,
   [UNDO_MENU_ID]: undoTab,
 };
+
+async function loadLanguage() {
+  try {
+    await loadTranslations();
+  } catch (error) {
+    console.error('[bitbucket-review-reset] translations failed', error);
+  }
+}
 
 function syncMenu() {
   syncUndoMenu().catch((error) => {
@@ -28,8 +38,8 @@ export default defineBackground(() => {
 
   // Firefox drops menus on browser restart and Chrome keeps them, so start from scratch every time
   // the background starts. That also picks up the undo state again.
-  browser.contextMenus
-    .removeAll()
+  const menusReady = loadLanguage()
+    .then(() => browser.contextMenus.removeAll())
     .then(() => {
       createMenus();
       syncMenu();
@@ -38,6 +48,14 @@ export default defineBackground(() => {
       console.error('[bitbucket-review-reset] menu setup failed', error);
     });
   watchBackup(syncMenu);
+  watchLanguage(() => {
+    menusReady
+      .then(loadLanguage)
+      .then(updateMenuTitles)
+      .catch((error) => {
+        console.error('[bitbucket-review-reset] menu update failed', error);
+      });
+  });
 
   browser.contextMenus.onClicked.addListener((info, tab) => {
     ACTIONS[String(info.menuItemId)]?.(tab);
