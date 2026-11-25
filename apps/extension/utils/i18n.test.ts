@@ -56,6 +56,13 @@ describe('parseBitbucketLocale', () => {
     expect(parseBitbucketLocale(script)).toBe('en');
   });
 
+  it('does not backtrack on long malformed locales', () => {
+    const script = `window.__app_data__ = {"locale": "aa${'_a'.repeat(50_000)}!"}`;
+    const start = performance.now();
+    expect(parseBitbucketLocale(script)).toBeNull();
+    expect(performance.now() - start).toBeLessThan(1000);
+  });
+
   it('ignores other scripts and missing locales', () => {
     expect(parseBitbucketLocale('x = {"locale": "de"}')).toBeNull();
     expect(parseBitbucketLocale('window.__app_data__ = {}')).toBeNull();

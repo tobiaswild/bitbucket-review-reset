@@ -42,7 +42,10 @@ export const bitbucketLocale = storage.defineItem<string | null>(
  */
 export function parseBitbucketLocale(script: string): string | null {
   if (!script.includes('__app_data__')) return null;
-  return /"locale":\s*"([A-Za-z]{2,3}(?:[-_]\w+)*)"/.exec(script)?.[1] ?? null;
+  return (
+    /"locale":\s*"([A-Za-z]{2,3}(?:[-_][A-Za-z0-9]+)*)"/.exec(script)?.[1] ??
+    null
+  );
 }
 
 /** The translation for a locale of Bitbucket; English where there is none. */
