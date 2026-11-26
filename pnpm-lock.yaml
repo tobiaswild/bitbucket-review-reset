@@ -249,8 +249,8 @@ importers:
   apps/extension:
     dependencies:
       '@wxt-dev/i18n':
-        specifier: ^0.2.8
-        version: 0.2.8(wxt@0.21.5(@rspack/core@1.7.12)(eslint@9.39.4(jiti@2.7.0)(supports-color@7.2.0))(oxc-parser@0.156.0)(rolldown@1.2.12)(typescript@7.0.2)(vite@8.3.3(@types/node@26.6.4)(jiti@2.7.0)(terser@5.51.2)(yaml@2.9.1))(web-ext@10.8.0(jiti@2.7.0)(supports-color@7.2.0))(webpack@5.112.0(@swc/core@1.16.20)(@swc/html@1.16.20)(clean-css@5.3.3)(cssnano@6.1.2(postcss@8.5.29))(csso@5.0.5)(html-minifier-terser@7.2.0)(lightningcss@1.33.0)(postcss@8.5.29)(svgo@3.3.5)))
+        specifier: ^0.2.9
+        version: 0.2.9(wxt@0.21.5(@rspack/core@1.7.12)(eslint@9.39.4(jiti@2.7.0)(supports-color@7.2.0))(oxc-parser@0.156.0)(rolldown@1.2.12)(typescript@7.0.2)(vite@8.3.3(@types/node@26.6.4)(jiti@2.7.0)(terser@5.51.2)(yaml@2.9.1))(web-ext@10.8.0(jiti@2.7.0)(supports-color@7.2.0))(webpack@5.112.0(@swc/core@1.16.20)(@swc/html@1.16.20)(clean-css@5.3.3)(cssnano@6.1.2(postcss@8.5.29))(csso@5.0.5)(html-minifier-terser@7.2.0)(lightningcss@1.33.0)(postcss@8.5.29)(svgo@3.3.5)))
       react:
         specifier: 'catalog:'
         version: 19.3.1
@@ -3426,8 +3426,8 @@ packages:
   '@wxt-dev/browser@0.3.4':
     resolution: {integrity: sha512-NhLuaIz0LBwudxexRN/siiUOvVvwXhvYH6zM2GARG7Ag5UEpgpQV556vi7nzWPwR2ayBHD97mlodqd5OiOMg4Q==}
 
-  '@wxt-dev/i18n@0.2.8':
-    resolution: {integrity: sha512-mxVwIJ2YFzsWuXEKMElaD7ehI6hfxjWT4ON8xFVX5kk+vNQ8JmgsDflfU8LApaNHULs8nqhU0QoLecVp075LPQ==}
+  '@wxt-dev/i18n@0.2.9':
+    resolution: {integrity: sha512-ik5ilk10s6IyQdIqkJY2D+TT5XLGrDsv5tNp92V+WxSwRMjo0czAKJXDSGW2JK8+Wc42R1ZAWi0/bsbkYw4paw==}
     peerDependencies:
       wxt: '>=0.19.7'
     peerDependenciesMeta:
@@ -12106,7 +12106,7 @@ snapshots:
       '@types/filesystem': 0.0.36
       '@types/har-format': 1.2.16
 
-  '@wxt-dev/i18n@0.2.8(wxt@0.21.5(@rspack/core@1.7.12)(eslint@9.39.4(jiti@2.7.0)(supports-color@7.2.0))(oxc-parser@0.156.0)(rolldown@1.2.12)(typescript@7.0.2)(vite@8.3.3(@types/node@26.6.4)(jiti@2.7.0)(terser@5.51.2)(yaml@2.9.1))(web-ext@10.8.0(jiti@2.7.0)(supports-color@7.2.0))(webpack@5.112.0(@swc/core@1.16.20)(@swc/html@1.16.20)(clean-css@5.3.3)(cssnano@6.1.2(postcss@8.5.29))(csso@5.0.5)(html-minifier-terser@7.2.0)(lightningcss@1.33.0)(postcss@8.5.29)(svgo@3.3.5)))':
+  '@wxt-dev/i18n@0.2.9(wxt@0.21.5(@rspack/core@1.7.12)(eslint@9.39.4(jiti@2.7.0)(supports-color@7.2.0))(oxc-parser@0.156.0)(rolldown@1.2.12)(typescript@7.0.2)(vite@8.3.3(@types/node@26.6.4)(jiti@2.7.0)(terser@5.51.2)(yaml@2.9.1))(web-ext@10.8.0(jiti@2.7.0)(supports-color@7.2.0))(webpack@5.112.0(@swc/core@1.16.20)(@swc/html@1.16.20)(clean-css@5.3.3)(cssnano@6.1.2(postcss@8.5.29))(csso@5.0.5)(html-minifier-terser@7.2.0)(lightningcss@1.33.0)(postcss@8.5.29)(svgo@3.3.5)))':
     dependencies:
       '@wxt-dev/browser': 0.3.4
       chokidar: 5.0.0
